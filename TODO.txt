@@ -1,0 +1,10 @@
+* optimize hashset implementation of message redundancy checking
+* design scheme for peer to join existing network
+	'--> some sort of handshake to exchange ids?
+* design scheme for peer to leave network
+	'--> connect adjacent peers together on exit?
+* secure messages?
+	'--> end to end encryption?
+* ability to send messages with specified receivers
+	'--> tag system
+* logging system?
