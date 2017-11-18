@@ -1,4 +1,5 @@
 import java.net.Socket;
+import java.net.ServerSocket;
 import java.util.concurrent.SynchronousQueue;
 import java.util.ArrayList;
 import java.lang.InterruptedException;
@@ -7,10 +8,13 @@ import java.io.IOException;
 import java.util.HashSet;
 
 public class Peer extends Thread {
+	private static final int REQ_PORT = 8888;
+
 	private int peerId;									// unique id for each Peer object
 	private ArrayList<PeerHandler> peerHandlers;		// listen/speak to peers
 	private SynchronousQueue<Message> msgQueue;			// serialize incoming messages to broadcast
 	private HashSet<Message> msgHistory;
+	private ServerSocket reqListener;
 	private boolean active;
 
 	private SocketListener socketListener;				// listen for new peers
@@ -27,6 +31,14 @@ public class Peer extends Thread {
 		this.echoHandler = new EchoHandler(this);
 		this.kbListener = new KeyboardListener(this);
 		this.socketListener = new SocketListener(this, port);
+
+		try {
+			this.reqListener = new ServerSocket(REQ_PORT);
+		} catch(Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
 	}
 
 	public void run() {
@@ -42,7 +54,28 @@ public class Peer extends Thread {
 		Socket skt = null;
 
 
+		while(this.active) {
+			try {
+				Socket req = this.reqListener.accept();
+				if(isReqSocket(req)) {
+					// HANDLE REQUEST
+					System.out.println("[Peer] FOUND REQUEST!");
+				} else {
+					// NOISE
+					System.out.println("[Peer] FOUND NOISE!");
+				}
+
+				req.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+
+
+
 		// Lord please forgive me for this abomination
+		/*
 		Object obj = new Object();
 		synchronized(obj) {
 			try {
@@ -53,6 +86,14 @@ public class Peer extends Thread {
 				System.exit(1);
 			}
 		}
+		*/
+	}
+
+	public static boolean isReqSocket(Socket skt) {
+		String local = skt.getLocalSocketAddress().toString().split(":")[0];
+		String remote = skt.getRemoteSocketAddress().toString().split(":")[0];
+
+		return local.equals(remote);
 	}
 
 	public int getPeerId() {
