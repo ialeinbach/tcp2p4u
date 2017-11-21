@@ -1,37 +1,35 @@
 import java.io.ObjectInputStream;
-import java.io.IOException;
 import java.util.concurrent.SynchronousQueue;
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
-public class PeerListener implements Runnable {
-	private SynchronousQueue<Message> msgQueue;	// same for all PeerHandlers per Peer
+public class PeerListener extends Observable implements Runnable {
 	private ObjectInputStream input;
 	private int peerId;
 	private boolean active;
 
-	public PeerListener(ObjectInputStream input, SynchronousQueue<Message> msgQueue, int peerId) {
-		this.msgQueue = msgQueue;
+	public PeerListener(Peer peer, ObjectInputStream input, int peerId) {
+		for(PeerHandler ph : peer.getPeerHandlers()) {
+			this.addObserver(ph);
+		}
+
 		this.input = input;
 		this.peerId = peerId;
-		this.active = true;
+		this.active = false;
 	}
 
 	// listen for Messages and send to holder Peer's msgQueue
 	public void run() {
-		Message incoming = null;
+		this.active = true;
 
 		while(this.active) {
 			try {
-				incoming = (Message)this.input.readObject();		// blocking
 				System.out.println("[PeerListener] Received message from a peer.");
-				this.msgQueue.put(incoming);
-			} catch(IOException ioe) {
-				ioe.printStackTrace();
-				System.exit(1);
-			} catch(ClassNotFoundException cnfe) {
-				cnfe.printStackTrace();
-				System.exit(1);
-			} catch(InterruptedException ie) {
-				ie.printStackTrace();
+				this.setChanged();
+				this.notifyObservers((Message)this.input.readObject());
+			} catch(Exception e) {
+				e.printStackTrace();
 				System.exit(1);
 			}
 		}

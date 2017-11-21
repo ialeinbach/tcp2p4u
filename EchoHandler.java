@@ -1,59 +1,41 @@
 import java.util.Iterator;
 import java.util.ArrayList;
-import java.util.concurrent.SynchronousQueue;
 import java.lang.InterruptedException;
-import java.lang.management.ManagementFactory;
 import java.util.HashSet;
+import java.util.Observer;
+import java.util.Observable;
 
-public class EchoHandler implements Runnable {
-	private SynchronousQueue<Message> msgQueue;
+public class EchoHandler extends Observable implements Observer {
 	private ArrayList<PeerHandler> peerHandlers;
 	private HashSet<Message> msgHistory;
 	private int peerId;
 	private boolean active;
 
 	public EchoHandler(Peer peer) {
-		this.msgQueue = peer.getMsgQueue();
 		this.msgHistory = peer.getMsgHistory();
 		this.peerHandlers = peer.getPeerHandlers();
 		this.peerId = peer.getPeerId();
 		this.active = false;
 	}
 
-	public void run() {
-		System.out.println("EchoHandler started.");
+	@Override
+	public void update(Observable obs, Object obj) {
+		Message msg = (Message)obj;
 
-		this.active = true;
-		Message msg = null;
+		if(this.msgHistory.add(msg)) {
+			System.out.println("[EchoHandler] Unique message found.");
 
-		while(this.active) {
-			try {
-				msg = this.msgQueue.take();	// blocking
-				System.out.println("[EchoHandler] Took message from msgQueue.");
-			} catch(InterruptedException ie) {
-				ie.printStackTrace();
-				System.exit(1);
-			}
-
-			if(this.msgHistory.add(msg)) {
-				System.out.println("[EchoHandler] Unique message found.");
-
-				if(msg.getSender() == this.peerId) {
-					System.out.println("[EchoHandler] Identified self as sender.");
-				} else {
-					System.out.println("[Some spacing]                                          [Message] " + msg);
-				}
-
-
-				for(int i = 0; i < this.peerHandlers.size(); i++) {
-					this.peerHandlers.get(i).talk(msg);
-				}
-
-				System.out.println("[EchoHandler] Broadcasted message.");
+			if(msg.getSender() == this.peerId) {
+				System.out.println("[EchoHandler] Identified self as sender.");
 			} else {
-				System.out.println("[EchoHandler] Redundant message found. Ignored.");
+				System.out.println("[Some spacing for visibility]                                    [Message] " + msg);
 			}
 
+			for(int i = 0; i < this.peerHandlers.size(); i++) {
+				this.peerHandlers.get(i).talk(msg);
+			}
+		} else {
+			System.out.println("[EchoHandler] Redundant message found. Ignored.");
 		}
 	}
 }

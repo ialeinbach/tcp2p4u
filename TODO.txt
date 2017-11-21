@@ -1,3 +1,8 @@
+Short-term:
+* Actually handle requests that Peer's receive from PeerHandler
+* When peer exits, remove corresponding observer
+
+Long-term:
 * optimize hashset implementation of message redundancy checking
 * design scheme for peer to join existing network
 	'--> some sort of handshake to exchange ids?

@@ -3,16 +3,16 @@ import java.io.ObjectInputStream;
 import java.util.concurrent.SynchronousQueue;
 import java.net.Socket;
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 
-public class PeerHandler {
-	private SynchronousQueue<Message> msgQueue;
+public class PeerHandler extends Observable implements Observer {
 	private PeerListener peerListener;
 	private PeerSpeaker peerSpeaker;
 	private int peerId;
 
-	public PeerHandler(Socket socket, SynchronousQueue<Message> msgQueue, int peerId) {
-		this.msgQueue = msgQueue;
-		this.peerId = peerId;
+	public PeerHandler(Peer peer, Socket socket) {
+		this.peerId = peer.getPeerId();
 
 		ObjectOutputStream objOutput = null;
 		ObjectInputStream objInput = null;
@@ -25,8 +25,16 @@ public class PeerHandler {
 			System.exit(1);
 		}
 
-		this.peerListener = new PeerListener(objInput, msgQueue, this.peerId);
 		this.peerSpeaker = new PeerSpeaker(objOutput, this.peerId);
+		this.peerListener = new PeerListener(peer, objInput, this.peerId);
+		this.peerListener.addObserver(peer.getEchoHandler());
+		this.listen();
+	}
+
+	public void update(Observable obs, Object obj) {
+		if(obs instanceof PeerListener) {
+			this.talk((Message)obj);
+		}
 	}
 
 	public void listen() {

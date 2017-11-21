@@ -3,11 +3,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.io.IOException;
+import java.util.Observable;
 
-public class SocketListener implements Runnable {
+public class SocketListener extends Observable implements Runnable {
 	private ServerSocket serverSocket;
+	private Peer peer;
 	private ArrayList<PeerHandler> peerHandlers;
-	private SynchronousQueue<Message> msgQueue;
 	private Boolean active;
 	private int peerCount;
 
@@ -21,14 +22,12 @@ public class SocketListener implements Runnable {
 
 		System.out.println("[SocketListener] Created internal ServerSocket object.");
 
-		this.msgQueue = peer.getMsgQueue();
 		this.peerHandlers = peer.getPeerHandlers();
-		this.peerCount = 0;
 		this.active = false;
 	}
 
 	public int getNextPeerId() {
-		return peerCount++;
+		return this.peer.getNextPeerId();
 	}
 
 	public void run() {
@@ -40,19 +39,13 @@ public class SocketListener implements Runnable {
 				Socket skt = this.serverSocket.accept();		// blocking
 				System.out.println("[SocketListener] Found socket.");
 
-				PeerHandler ph = new PeerHandler(skt, this.msgQueue, this.getNextPeerId());
-				System.out.println("[SocketListener] Wrapped socket in peer handler.");
-
-				ph.listen();
-				this.peerHandlers.add(ph);
+				this.peerHandlers.add(new PeerHandler(this.peer, skt));
 				System.out.println("[SocketListener] Filed peer handler.");
-
-			} catch(IOException ioe) {
-				ioe.printStackTrace();
+			} catch(Exception e) {
+				e.printStackTrace();
 				System.exit(1);
 			}
 
 		}
 	}
-
 }

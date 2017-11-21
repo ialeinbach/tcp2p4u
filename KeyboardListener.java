@@ -1,13 +1,13 @@
 import java.util.concurrent.SynchronousQueue;
 import java.util.Scanner;
+import java.util.Observable;
 
-public class KeyboardListener implements Runnable {
-	SynchronousQueue<Message> msgQueue;
+public class KeyboardListener extends Observable implements Runnable {
 	int peerId;
 	boolean active;
 
 	public KeyboardListener(Peer peer) {
-		this.msgQueue = peer.getMsgQueue();
+		this.addObserver(peer.getEchoHandler());
 		this.peerId = peer.getPeerId();
 		this.active = false;
 	}
@@ -21,18 +21,17 @@ public class KeyboardListener implements Runnable {
 		String line = null;
 
 		while(this.active) {
-			System.out.println("[KeyboardListener] Waiting to read message...");
-			line = sc.nextLine();	// does not include terminating '\n'
-			System.out.println("[KeyboardListener] Read message from user.");
-
 			try {
-				this.msgQueue.put(new Message(line, this.peerId));
-			} catch(InterruptedException ie) {
-				ie.printStackTrace();
+				System.out.println("[KeyboardListener] Waiting to read message...");
+				line = sc.nextLine();	// does not include terminating '\n'
+				System.out.println("[KeyboardListener] Read message from user.");
+
+				this.setChanged();
+				this.notifyObservers(new Message(line, this.peerId));
+			} catch(Exception e) {
+				e.printStackTrace();
 				System.exit(1);
 			}
-
-			System.out.println("[KeyboardListener] Added message to msgQueue.");
 		}
 	}
 }
