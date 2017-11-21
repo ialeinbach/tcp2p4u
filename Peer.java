@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import java.io.IOException;
 import java.util.HashSet;
 
-public class Peer extends Thread {
+public class Peer implements Runnable {
 	private static final int REQ_PORT = 8888;
 
 	private int peerId;									// unique id for each Peer object
@@ -46,9 +46,9 @@ public class Peer extends Thread {
 
 		System.out.println("Peer started.");
 
-		this.socketListener.start();
-		this.echoHandler.start();
-		this.kbListener.start();
+		new Thread(this.socketListener).start();
+		new Thread(this.echoHandler).start();
+		new Thread(this.kbListener).start();
 
 		int nextPeer = 1;		// stand-in for assigning IDs to new peers
 		Socket skt = null;

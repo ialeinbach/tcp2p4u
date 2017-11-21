@@ -4,7 +4,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.io.IOException;
 
-public class SocketListener extends Thread {
+public class SocketListener implements Runnable {
 	private ServerSocket serverSocket;
 	private ArrayList<PeerHandler> peerHandlers;
 	private SynchronousQueue<Message> msgQueue;

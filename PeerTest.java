@@ -21,6 +21,6 @@ public class PeerTest {
 			System.exit(1);
 		}
 
-		p.start();
+		new Thread(p).start();
 	}
 }

@@ -1,7 +1,7 @@
 import java.util.concurrent.SynchronousQueue;
 import java.util.Scanner;
 
-public class KeyboardListener extends Thread {
+public class KeyboardListener implements Runnable {
 	SynchronousQueue<Message> msgQueue;
 	int peerId;
 	boolean active;

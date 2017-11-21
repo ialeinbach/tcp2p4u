@@ -5,7 +5,7 @@ import java.lang.InterruptedException;
 import java.lang.management.ManagementFactory;
 import java.util.HashSet;
 
-public class EchoHandler extends Thread {
+public class EchoHandler implements Runnable {
 	private SynchronousQueue<Message> msgQueue;
 	private ArrayList<PeerHandler> peerHandlers;
 	private HashSet<Message> msgHistory;

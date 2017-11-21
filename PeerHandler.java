@@ -30,7 +30,7 @@ public class PeerHandler {
 	}
 
 	public void listen() {
-		this.peerListener.start();
+		new Thread(this.peerListener).start();
 		System.out.println("[PeerHandler] Told peer listener to start listening.");
 	}
 

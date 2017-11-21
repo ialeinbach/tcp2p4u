@@ -2,7 +2,7 @@ import java.io.ObjectInputStream;
 import java.io.IOException;
 import java.util.concurrent.SynchronousQueue;
 
-public class PeerListener extends Thread {
+public class PeerListener implements Runnable {
 	private SynchronousQueue<Message> msgQueue;	// same for all PeerHandlers per Peer
 	private ObjectInputStream input;
 	private int peerId;
