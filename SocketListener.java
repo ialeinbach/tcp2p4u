@@ -23,6 +23,7 @@ public class SocketListener extends Observable implements Runnable {
 		System.out.println("[SocketListener] Created internal ServerSocket object.");
 
 		this.peerHandlers = peer.getPeerHandlers();
+		this.peer = peer;
 		this.active = false;
 	}
 
