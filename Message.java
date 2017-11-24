@@ -1,19 +1,19 @@
 import java.io.Serializable;
 import java.util.Date;
 
-public class Message implements Serializable {
-	private String msg;
+public abstract class Message implements Serializable {
+	private String content;
 	private Date timestamp;
 	private int sender;
 
-	public Message(String msg, int sender) {
-		this.msg = msg;
+	public Message(String content, int sender) {
+		this.content = content;
 		this.sender = sender;
 		this.timestamp = new Date();
 	}
 
 	public String getContent() {
-		return this.msg;
+		return this.content;
 	}
 
 	public int getSender() {
@@ -22,10 +22,6 @@ public class Message implements Serializable {
 
 	public long getTimestamp() {
 		return this.timestamp.getTime();
-	}
-
-	public String toString() {
-		return "[" + this.sender + "] " + this.getContent();
 	}
 
 	// https://stackoverflow.com/questions/113511/best-implementation-for-hashcode-method

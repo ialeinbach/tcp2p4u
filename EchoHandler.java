@@ -27,7 +27,7 @@ public class EchoHandler extends Observable implements Observer {
 			if(msg.getSender() == this.peerId) {
 				System.out.println("[EchoHandler] Identified self as sender.");
 			} else {
-				System.out.println("[Some spacing for visibility]                                    [Message] " + msg);
+				System.out.println(msg);
 			}
 
 			for(int i = 0; i < this.peerHandlers.size(); i++) {

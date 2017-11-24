@@ -27,7 +27,7 @@ public class KeyboardListener extends Observable implements Runnable {
 				System.out.println("[KeyboardListener] Read message from user.");
 
 				this.setChanged();
-				this.notifyObservers(new Message(line, this.peerId));
+				this.notifyObservers(new MsgMessage(line, this.peerId));
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.exit(1);
