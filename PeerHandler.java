@@ -16,7 +16,7 @@ public class PeerHandler extends Observable implements Observer {
 			this.peerId = peer.getPeerId();
 			this.socket = socket;
 			this.peerSpeaker = new PeerSpeaker(new ObjectOutputStream(socket.getOutputStream()), this.peerId);
-			this.peerListener = new PeerListener(peer, objectInputStream(socket.getInputStream()), this.peerId);
+			this.peerListener = new PeerListener(peer, new ObjectInputStream(socket.getInputStream()), this.peerId);
 			this.peerListener.addObserver(peer.getEchoHandler());
 			this.listen();
 		} catch(Exception e) {
