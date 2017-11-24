@@ -1,6 +1,5 @@
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
-import java.util.concurrent.SynchronousQueue;
 import java.net.Socket;
 import java.io.IOException;
 import java.util.Observable;
@@ -9,26 +8,21 @@ import java.util.Observer;
 public class PeerHandler extends Observable implements Observer {
 	private PeerListener peerListener;
 	private PeerSpeaker peerSpeaker;
+	private Socket socket;
 	private int peerId;
 
 	public PeerHandler(Peer peer, Socket socket) {
-		this.peerId = peer.getPeerId();
-
-		ObjectOutputStream objOutput = null;
-		ObjectInputStream objInput = null;
-
 		try {
-			objOutput = new ObjectOutputStream(socket.getOutputStream());
-			objInput = new ObjectInputStream(socket.getInputStream());
-		} catch(IOException ioe) {
-			ioe.printStackTrace();
+			this.peerId = peer.getPeerId();
+			this.socket = socket;
+			this.peerSpeaker = new PeerSpeaker(new ObjectOutputStream(socket.getOutputStream()), this.peerId);
+			this.peerListener = new PeerListener(peer, objectInputStream(socket.getInputStream()), this.peerId);
+			this.peerListener.addObserver(peer.getEchoHandler());
+			this.listen();
+		} catch(Exception e) {
+			e.printStackTrace();
 			System.exit(1);
 		}
-
-		this.peerSpeaker = new PeerSpeaker(objOutput, this.peerId);
-		this.peerListener = new PeerListener(peer, objInput, this.peerId);
-		this.peerListener.addObserver(peer.getEchoHandler());
-		this.listen();
 	}
 
 	public void update(Observable obs, Object obj) {

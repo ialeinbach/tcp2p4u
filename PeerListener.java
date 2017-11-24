@@ -10,10 +10,6 @@ public class PeerListener extends Observable implements Runnable {
 	private boolean active;
 
 	public PeerListener(Peer peer, ObjectInputStream input, int peerId) {
-		for(PeerHandler ph : peer.getPeerHandlers()) {
-			this.addObserver(ph);
-		}
-
 		this.input = input;
 		this.peerId = peerId;
 		this.active = false;

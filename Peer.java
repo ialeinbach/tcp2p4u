@@ -26,7 +26,7 @@ public class Peer implements Runnable {
 		this.peerId = peerId;
 		this.peerHandlers = new ArrayList<PeerHandler>();
 		this.msgHistory = new HashSet<Message>();
-		this.nextPeerId = 1;							// 0 is self
+		this.nextPeerId = this.peerId + 1;
 		this.active = false;
 
 		this.echoHandler = new EchoHandler(this);
@@ -39,7 +39,6 @@ public class Peer implements Runnable {
 			e.printStackTrace();
 			System.exit(1);
 		}
-
 	}
 
 	public void run() {

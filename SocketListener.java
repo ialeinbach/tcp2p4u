@@ -39,7 +39,6 @@ public class SocketListener extends Observable implements Runnable {
 			try {
 				Socket skt = this.serverSocket.accept();		// blocking
 				System.out.println("[SocketListener] Found socket.");
-
 				this.peerHandlers.add(new PeerHandler(this.peer, skt));
 				System.out.println("[SocketListener] Filed peer handler.");
 			} catch(Exception e) {

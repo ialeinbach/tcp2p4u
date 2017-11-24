@@ -18,7 +18,6 @@ public class EchoHandler extends Observable implements Observer {
 		this.active = false;
 	}
 
-	@Override
 	public void update(Observable obs, Object obj) {
 		Message msg = (Message)obj;
 
