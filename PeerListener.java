@@ -23,7 +23,7 @@ public class PeerListener extends Observable implements Runnable {
 			try {
 				System.out.println("[PeerListener] Received message from a peer.");
 				this.setChanged();
-				this.notifyObservers((MsgMessage)this.input.readObject());
+				this.notifyObservers((Message)this.input.readObject());
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.exit(1);
