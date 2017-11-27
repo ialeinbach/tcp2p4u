@@ -1,4 +1,5 @@
 import java.net.Socket;
+import java.util.Arrays;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.util.concurrent.SynchronousQueue;
@@ -70,6 +71,7 @@ public class Peer implements Runnable {
 			InputStream in = req.getInputStream();
 			byte[] content = new byte[4096];
 			in.read(content);
+			System.out.println(Arrays.toString(content));
 		} catch(IOException ioe) {
 			ioe.printStackTrace();
 			System.exit(1);
