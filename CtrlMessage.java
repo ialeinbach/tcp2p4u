@@ -1,7 +1,7 @@
 import java.net.InetAddress;
 
-public class DisconnectMessage extends Message {
-	public DisconnectMessage(String ins, int sender) {
+public class CtrlMessage extends Message {
+	public CtrlMessage(String ins, int sender) {
 		super(ins, sender);
 	}
 

@@ -2,9 +2,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 public abstract class Message implements Serializable {
-	private String content;
-	private Date timestamp;
-	private int sender;
+	protected String content;
+	protected Date timestamp;
+	protected int sender;
 
 	public Message(String content, int sender) {
 		this.content = content;
