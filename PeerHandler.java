@@ -33,11 +33,9 @@ public class PeerHandler extends Observable implements Observer {
 
 	public void listen() {
 		new Thread(this.peerListener).start();
-		System.out.println("[PeerHandler] Told peer listener to start listening.");
 	}
 
 	public void talk(Message msg) {
 		this.peerSpeaker.writeMessage(msg);
-		System.out.println("[PeerHandler] Told peer speaker to send a message.");
 	}
 }

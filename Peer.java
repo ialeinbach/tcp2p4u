@@ -43,9 +43,6 @@ public class Peer implements Runnable {
 
 	public void run() {
 		this.active = true;
-
-		System.out.println("Peer started.");
-
 		new Thread(this.socketListener).start();
 		new Thread(this.kbListener).start();
 

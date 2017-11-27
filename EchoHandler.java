@@ -22,19 +22,14 @@ public class EchoHandler extends Observable implements Observer {
 		Message msg = (Message)obj;
 
 		if(this.msgHistory.add(msg)) {
-			System.out.println("[EchoHandler] Unique message found.");
-
-			if(msg.getSender() == this.peerId) {
-				System.out.println("[EchoHandler] Identified self as sender.");
-			} else {
+			if(msg.getSender() != this.peerId) {
 				System.out.println(msg);
 			}
 
-			for(int i = 0; i < this.peerHandlers.size(); i++) {
+			int numPeers = this.peerHandlers.size();
+			for(int i = 0; i < numPeers; i++) {
 				this.peerHandlers.get(i).talk(msg);
 			}
-		} else {
-			System.out.println("[EchoHandler] Redundant message found. Ignored.");
 		}
 	}
 }

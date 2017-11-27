@@ -1,5 +1,4 @@
 import java.io.ObjectOutputStream;
-import java.io.IOException;
 
 public class PeerSpeaker {
 	private ObjectOutputStream output;
@@ -13,9 +12,8 @@ public class PeerSpeaker {
 	public void writeMessage(Message msg) {
 		try {
 			this.output.writeObject(msg);
-			System.out.println("[PeerSpeaker] Wrote message to socket.");
-		} catch(IOException ioe) {
-			ioe.printStackTrace();
+		} catch(Exception e) {
+			e.printStackTrace();
 			System.exit(1);
 		}
 	}

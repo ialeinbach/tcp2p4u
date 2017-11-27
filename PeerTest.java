@@ -16,8 +16,8 @@ public class PeerTest {
 		try {
 			InetAddress host = InetAddress.getByAddress(addr);
 			p.join(host, 8080);
-		} catch(UnknownHostException uhe) {
-			uhe.printStackTrace();
+		} catch(Exception e) {
+			e.printStackTrace();
 			System.exit(1);
 		}
 
