@@ -8,5 +8,6 @@
 ./EchoHandler.java
 ./PeerHandler.java
 ./Peer.java
+./PeerRequest.java
 ./PeerTest.java
 ./PeerStarterTest.java
