@@ -4,10 +4,10 @@ public class MsgMessage extends Message {
 	}
 
 	public String getMessage() {
-		return super.getContent();
+		return this.getContent();
 	}
 
 	public String toString() {
-		return "[Message from Peer " + super.getSender() + "] " + this.getMessage();
+		return "[Message from Peer " + this.getSender() + "] " + this.getMessage();
 	}
 }

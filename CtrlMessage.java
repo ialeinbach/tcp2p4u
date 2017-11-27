@@ -10,6 +10,6 @@ public class CtrlMessage extends Message {
 	}
 
 	public String toString() {
-		return "[Peer " + this.sender + " disconnecting] Connect to: " + this.getContent();
+		return "[Peer " + this.getSender() + " disconnecting] Connect to: " + this.getContent();
 	}
 }
