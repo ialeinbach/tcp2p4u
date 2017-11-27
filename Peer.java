@@ -71,7 +71,7 @@ public class Peer implements Runnable {
 			InputStream in = req.getInputStream();
 			byte[] content = new byte[4096];
 			in.read(content);
-			System.out.println(Arrays.toString(content));
+			System.out.println(new String(content));
 		} catch(IOException ioe) {
 			ioe.printStackTrace();
 			System.exit(1);
