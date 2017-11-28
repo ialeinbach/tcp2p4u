@@ -20,7 +20,7 @@ public class PeerRequest {
 
 	public void connect() {
 		try {
-			Socket skt = new Socket("localhost", port);
+			Socket skt = new Socket((String)null, port);
 			this.output = skt.getOutputStream();
 		} catch(Exception e) {
 			e.printStackTrace();
