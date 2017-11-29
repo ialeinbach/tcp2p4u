@@ -115,4 +115,28 @@ public class Peer implements Runnable {
 			System.exit(1);
 		}
 	}
+
+	public static void main(String[] args) {
+		if(args.length != 1) {
+			System.out.println("Invalid arguments.");
+			System.exit(1);
+		}
+
+		int peerId = Integer.parseInt(args[0]);
+		Peer p = new Peer(peerId, 40000);
+
+		byte[] addr = {(byte)143, (byte)229, (byte)240, (byte)89};
+
+		if(peerId != 0) {
+			try {
+				InetAddress host = InetAddress.getByAddress(addr);
+				p.join(host, 40000);
+			} catch(Exception e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+
+		new Thread(p).start();
+	}
 }
