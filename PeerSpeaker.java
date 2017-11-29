@@ -2,11 +2,9 @@ import java.io.ObjectOutputStream;
 
 public class PeerSpeaker {
 	private ObjectOutputStream output;
-	private int peerId;
 
-	public PeerSpeaker(ObjectOutputStream output, int peerId) {
+	public PeerSpeaker(ObjectOutputStream output) {
 		this.output = output;
-		this.peerId = peerId;
 	}
 
 	public void writeMessage(Message msg) {

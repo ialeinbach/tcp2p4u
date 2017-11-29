@@ -9,14 +9,12 @@ public class PeerHandler extends Observable implements Observer {
 	private PeerListener peerListener;
 	private PeerSpeaker peerSpeaker;
 	private Socket socket;
-	private int peerId;
 
 	public PeerHandler(Peer peer, Socket socket) {
 		try {
-			this.peerId = peer.getPeerId();
 			this.socket = socket;
-			this.peerSpeaker = new PeerSpeaker(new ObjectOutputStream(socket.getOutputStream()), this.peerId);
-			this.peerListener = new PeerListener(peer, new ObjectInputStream(socket.getInputStream()), this.peerId);
+			this.peerSpeaker = new PeerSpeaker(new ObjectOutputStream(socket.getOutputStream()));
+			this.peerListener = new PeerListener(peer, new ObjectInputStream(socket.getInputStream()));
 			this.peerListener.addObserver(peer.getEchoHandler());
 			this.listen();
 		} catch(Exception e) {

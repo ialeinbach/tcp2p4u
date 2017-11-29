@@ -25,10 +25,6 @@ public class SocketListener extends Observable implements Runnable {
 		this.active = false;
 	}
 
-	public int getNextPeerId() {
-		return this.peer.getNextPeerId();
-	}
-
 	public void run() {
 		this.active = true;
 

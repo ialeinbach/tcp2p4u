@@ -16,7 +16,6 @@ public class Peer implements Runnable {
 	private ArrayList<PeerHandler> peerHandlers;		// listen/speak to peers
 	private HashSet<Message> msgHistory;
 	private ServerSocket reqListener;
-	private int nextPeerId;
 	private boolean active;
 
 	private SocketListener socketListener;				// listen for new peers
@@ -26,7 +25,6 @@ public class Peer implements Runnable {
 		this.peerId = peerId;
 		this.peerHandlers = new ArrayList<PeerHandler>();
 		this.msgHistory = new HashSet<Message>();
-		this.nextPeerId = this.peerId + 1;
 		this.active = false;
 
 		this.echoHandler = new EchoHandler(this);
@@ -44,7 +42,6 @@ public class Peer implements Runnable {
 		this.active = true;
 		new Thread(this.socketListener).start();
 
-		int nextPeer = 1;		// stand-in for assigning IDs to new peers
 		Socket skt = null;
 
 		while(this.active) {
@@ -80,10 +77,6 @@ public class Peer implements Runnable {
 		String remote = skt.getRemoteSocketAddress().toString().split(":")[0];
 
 		return local.equals(remote);
-	}
-
-	public int getNextPeerId() {
-		return this.nextPeerId++;
 	}
 
 	public int getPeerId() {

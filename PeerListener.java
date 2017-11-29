@@ -6,12 +6,10 @@ import java.util.Observer;
 
 public class PeerListener extends Observable implements Runnable {
 	private ObjectInputStream input;
-	private int peerId;
 	private boolean active;
 
-	public PeerListener(Peer peer, ObjectInputStream input, int peerId) {
+	public PeerListener(Peer peer, ObjectInputStream input) {
 		this.input = input;
-		this.peerId = peerId;
 		this.active = false;
 	}
 
