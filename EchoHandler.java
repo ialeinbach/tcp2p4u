@@ -1,6 +1,4 @@
-import java.util.Iterator;
 import java.util.ArrayList;
-import java.lang.InterruptedException;
 import java.util.HashSet;
 import java.util.Observer;
 import java.util.Observable;
@@ -9,13 +7,11 @@ public class EchoHandler extends Observable implements Observer {
 	private ArrayList<PeerHandler> peerHandlers;
 	private HashSet<Message> msgHistory;
 	private int peerId;
-	private boolean active;
 
 	public EchoHandler(Peer peer) {
-		this.msgHistory = peer.getMsgHistory();
 		this.peerHandlers = peer.getPeerHandlers();
+		this.msgHistory = peer.getMsgHistory();
 		this.peerId = peer.getPeerId();
-		this.active = false;
 	}
 
 	public void update(Observable obs, Object obj) {

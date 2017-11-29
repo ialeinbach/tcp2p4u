@@ -1,7 +1,6 @@
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.net.Socket;
-import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -24,9 +23,7 @@ public class PeerHandler extends Observable implements Observer {
 	}
 
 	public void update(Observable obs, Object obj) {
-		if(obs instanceof PeerListener) {
-			this.talk((Message)obj);
-		}
+		this.talk((Message)obj);
 	}
 
 	public void listen() {

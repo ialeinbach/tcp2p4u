@@ -1,5 +1,4 @@
 import java.io.ObjectInputStream;
-import java.util.concurrent.SynchronousQueue;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;

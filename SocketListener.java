@@ -1,8 +1,6 @@
-import java.util.concurrent.SynchronousQueue;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.io.IOException;
 import java.util.Observable;
 
 public class SocketListener extends Observable implements Runnable {
@@ -10,7 +8,6 @@ public class SocketListener extends Observable implements Runnable {
 	private Peer peer;
 	private ArrayList<PeerHandler> peerHandlers;
 	private Boolean active;
-	private int peerCount;
 
 	public SocketListener(Peer peer, int port) {
 		try {
