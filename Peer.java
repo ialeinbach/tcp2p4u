@@ -21,7 +21,6 @@ public class Peer implements Runnable {
 
 	private SocketListener socketListener;				// listen for new peers
 	private EchoHandler echoHandler;					// broadcast incoming to all peerhandlers
-	private KeyboardListener kbListener;				// take input from keyboard
 
 	public Peer(int peerId, int port) {
 		this.peerId = peerId;
@@ -31,7 +30,6 @@ public class Peer implements Runnable {
 		this.active = false;
 
 		this.echoHandler = new EchoHandler(this);
-		this.kbListener = new KeyboardListener(this);
 		this.socketListener = new SocketListener(this, port);
 
 		try {
@@ -45,7 +43,6 @@ public class Peer implements Runnable {
 	public void run() {
 		this.active = true;
 		new Thread(this.socketListener).start();
-		new Thread(this.kbListener).start();
 
 		int nextPeer = 1;		// stand-in for assigning IDs to new peers
 		Socket skt = null;
