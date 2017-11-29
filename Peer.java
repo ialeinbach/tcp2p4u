@@ -1,25 +1,22 @@
 import java.net.Socket;
-import java.util.Arrays;
 import java.io.InputStream;
 import java.net.ServerSocket;
-import java.util.concurrent.SynchronousQueue;
 import java.util.ArrayList;
-import java.lang.InterruptedException;
 import java.net.InetAddress;
-import java.io.IOException;
 import java.util.HashSet;
 
 public class Peer implements Runnable {
 	private static final int REQ_PORT = 8888;
+	private static final int REQ_MAX_SIZE = 4096;
 
-	private int peerId;									// unique id for each Peer object
-	private ArrayList<PeerHandler> peerHandlers;		// listen/speak to peers
-	private HashSet<Message> msgHistory;
-	private ServerSocket reqListener;
 	private boolean active;
+	private int peerId;									// unique id for each Peer
+	private HashSet<Message> msgHistory;				// store seen Messages to avoid infinite propogation
+	private ArrayList<PeerHandler> peerHandlers;		// listen/speak to Peers
 
-	private SocketListener socketListener;				// listen for new peers
-	private EchoHandler echoHandler;					// broadcast incoming to all peerhandlers
+	private SocketListener socketListener;				// listen for new Peers
+	private EchoHandler echoHandler;					// broadcast incoming to all PeerHandlers
+	private ServerSocket reqListener;					// listen for requests
 
 	public Peer(int peerId, int port) {
 		this.peerId = peerId;
@@ -42,8 +39,6 @@ public class Peer implements Runnable {
 		this.active = true;
 		new Thread(this.socketListener).start();
 
-		Socket skt = null;
-
 		while(this.active) {
 			try {
 				Socket req = this.reqListener.accept();
@@ -60,16 +55,28 @@ public class Peer implements Runnable {
 		}
 	}
 
-	public void handleRequest(Socket req) {
+	public void join(InetAddress addr, int port) {
 		try {
-			InputStream in = req.getInputStream();
-			byte[] content = new byte[4096];
-			in.read(content);
-			System.out.println(new String(content));
-		} catch(IOException ioe) {
-			ioe.printStackTrace();
+			Socket skt = new Socket(addr, port);
+			this.peerHandlers.add(new PeerHandler(this, skt));
+		} catch(Exception e) {
+			e.printStackTrace();
 			System.exit(1);
 		}
+	}
+
+	public void handleRequest(Socket req) {
+		byte[] content = new byte[REQ_MAX_SIZE];
+
+		try {
+			InputStream in = req.getInputStream();
+			in.read(content, 0, REQ_MAX_SIZE);
+		} catch(Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		System.out.println(new String(content));
 	}
 
 	public static boolean isReqSocket(Socket skt) {
@@ -95,17 +102,6 @@ public class Peer implements Runnable {
 		return this.msgHistory;
 	}
 
-	// call once initially to look for existing peers
-	public void join(InetAddress ipAddr, int port) {
-		try {
-			Socket skt = new Socket(ipAddr, port);
-			this.peerHandlers.add(new PeerHandler(this, skt));
-		} catch(Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
-
 	public static void main(String[] args) {
 		if(args.length != 1) {
 			System.out.println("Invalid arguments.");
@@ -115,11 +111,9 @@ public class Peer implements Runnable {
 		int peerId = Integer.parseInt(args[0]);
 		Peer p = new Peer(peerId, 40000);
 
-		byte[] addr = {(byte)143, (byte)229, (byte)240, (byte)89};
-
 		if(peerId != 0) {
 			try {
-				InetAddress host = InetAddress.getByAddress(addr);
+				InetAddress host = InetAddress.getByName("143.229.240.89");
 				p.join(host, 40000);
 			} catch(Exception e) {
 				e.printStackTrace();
