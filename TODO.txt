@@ -1,5 +1,5 @@
 Short-term:
-* Actually handle requests that Peer's receive from PeerHandler
+* Actually handle requests that Peers receive from PeerRequests or PeerHandlers
 * When peer exits, remove corresponding observer
 
 Long-term:
