@@ -65,18 +65,25 @@ public class Peer implements Runnable {
 		}
 	}
 
-	public void handleRequest(Socket req) {
+	public void handleRequest(Socket skt) {
 		byte[] content = new byte[REQ_MAX_SIZE];
+		Request req = null;
 
 		try {
-			InputStream in = req.getInputStream();
+			InputStream in = skt.getInputStream();
 			in.read(content, 0, REQ_MAX_SIZE);
+			req = new Request(new String(content));
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 
-		System.out.println(new String(content));
+		System.out.println(req.getCommand());
+		String[] arguments = req.getArguments();
+		for(String arg : arguments) {
+			System.out.print("[" + arg + "]");
+		}
+		System.out.println();
 	}
 
 	public static boolean isReqSocket(Socket skt) {
