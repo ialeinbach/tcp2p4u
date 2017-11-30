@@ -2,12 +2,12 @@ import java.net.Socket;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-public class PeerRequest {
+public class PeerRequester {
 	private OutputStream output;
 	private static final int port = 8888;
 	private String input;
 
-	public PeerRequest(String[] input) {
+	public PeerRequester(String[] input) {
 		for(String arg : input) {
 			if(arg.contains(";")) {
 				System.out.println("Illegal character \";\" ");
@@ -42,7 +42,7 @@ public class PeerRequest {
 	}
 
 	public static void main(String[] args) {
-		PeerRequest pr = new PeerRequest(args);
+		PeerRequester pr = new PeerRequester(args);
 		pr.connect();
 		pr.request();
 		System.exit(0);
