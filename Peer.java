@@ -76,12 +76,7 @@ public class Peer implements Runnable {
 			System.exit(1);
 		}
 
-		System.out.println(req.getCommand());
-		String[] arguments = req.getArguments();
-		for(String arg : arguments) {
-			System.out.print("[" + arg + "]");
-		}
-		System.out.println();
+		System.out.println(req);
 	}
 
 	public static boolean isReqSocket(Socket skt) {
