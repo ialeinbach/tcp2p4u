@@ -1,4 +1,6 @@
-public class Request {
+import java.io.Serializable;
+
+public class Request implements Serializable {
 	private final String command;
 	private final String[] arguments;
 

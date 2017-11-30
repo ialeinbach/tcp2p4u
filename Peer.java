@@ -1,5 +1,5 @@
 import java.net.Socket;
-import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.net.InetAddress;
@@ -66,13 +66,11 @@ public class Peer implements Runnable {
 	}
 
 	public void handleRequest(Socket skt) {
-		byte[] content = new byte[REQ_MAX_SIZE];
 		Request req = null;
 
 		try {
-			InputStream in = skt.getInputStream();
-			in.read(content, 0, REQ_MAX_SIZE);
-			req = new Request(new String(content));
+			ObjectInputStream in = new ObjectInputStream(skt.getInputStream());
+			req = (Request)in.readObject();
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);

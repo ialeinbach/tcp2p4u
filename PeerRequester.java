@@ -1,11 +1,11 @@
 import java.net.Socket;
-import java.io.OutputStream;
+import java.io.ObjectOutputStream;
 import java.nio.charset.Charset;
 
 public class PeerRequester {
-	private OutputStream output;
+	private ObjectOutputStream output;
 	private static final int port = 8888;
-	private String input;
+	private Request request;
 
 	public PeerRequester(String[] input) {
 		for(String arg : input) {
@@ -15,13 +15,13 @@ public class PeerRequester {
 			}
 		}
 
-		this.input = String.join(";", input);
+		this.request = new Request(input);
 	}
 
 	public void connect() {
 		try {
 			Socket skt = new Socket((String)null, port);
-			this.output = skt.getOutputStream();
+			this.output = new ObjectOutputStream(skt.getOutputStream());
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -29,12 +29,8 @@ public class PeerRequester {
 	}
 
 	public void request() {
-		byte[] inp = this.input.getBytes(Charset.forName("UTF-8"));
-
-		System.out.println(new String(inp));
-
 		try {
-			this.output.write(inp);
+			this.output.writeObject(this.request);
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
