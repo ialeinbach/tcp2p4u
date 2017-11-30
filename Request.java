@@ -40,4 +40,22 @@ public class Request implements Serializable {
 	public String[] getArguments() {
 		return this.arguments;
 	}
+
+	public String toString() {
+		String command = this.getCommand();
+		String[] arguments = this.getArguments();
+
+		String out = "[REQUEST] ";
+		out += command != null ? command : "NO_CMD";
+
+		if(arguments != null && arguments.length > 0) {
+			for(String arg : arguments) {
+				out += " <" + arg + ">";
+			}
+		} else {
+			out += "NO_ARGS";
+		}
+
+		return out;
+	}
 }
