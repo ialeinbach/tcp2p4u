@@ -11,7 +11,7 @@ The IP address of an existing peer in the network, must be hardcoded into the ma
 of ```Peer.java``` to add subsequent peers.   
 Run ```java Peer X &``` to create a peer with peerId = X.    
 
-Run ```java PeerRequest``` with command line arguments to make requests to your locally 
+Run ```java PeerRequester``` with command line arguments to make requests to your locally 
 hosted Peer.   
 Currently, requests are just printed by the receiving Peer with no behavior, so there is no 
 way to send messages in the current build.
