@@ -14,6 +14,13 @@ public class EchoHandler extends Observable implements Observer {
 		this.peerId = peer.getPeerId();
 	}
 
+	public void broadcast(Message msg) {
+		int numPeers = this.peerHandlers.size();
+		for(int i = 0; i < numPeers; i++) {
+			this.peerHandlers.get(i).talk(msg);
+		}
+	}
+
 	public void update(Observable obs, Object obj) {
 		Message msg = (Message)obj;
 
@@ -22,10 +29,7 @@ public class EchoHandler extends Observable implements Observer {
 				System.out.println(msg);
 			}
 
-			int numPeers = this.peerHandlers.size();
-			for(int i = 0; i < numPeers; i++) {
-				this.peerHandlers.get(i).talk(msg);
-			}
+			this.broadcast(msg);
 		}
 	}
 }
