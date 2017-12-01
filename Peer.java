@@ -13,6 +13,7 @@ public class Peer implements Runnable {
 	private int peerId;									// unique id for each Peer
 	private HashSet<Message> msgHistory;				// store seen Messages to avoid infinite propogation
 	private ArrayList<PeerHandler> peerHandlers;		// listen/speak to Peers
+	private final String chatFilename;
 
 	private SocketListener socketListener;				// listen for new Peers
 	private EchoHandler echoHandler;					// broadcast incoming to all PeerHandlers
@@ -23,6 +24,7 @@ public class Peer implements Runnable {
 		this.peerHandlers = new ArrayList<PeerHandler>();
 		this.msgHistory = new HashSet<Message>();
 		this.active = false;
+		this.chatFilename = System.getProperty("user.home") + "/.peerchat";
 
 		this.echoHandler = new EchoHandler(this);
 		this.socketListener = new SocketListener(this, port);
@@ -126,6 +128,10 @@ public class Peer implements Runnable {
 
 	public HashSet<Message> getMsgHistory() {
 		return this.msgHistory;
+	}
+
+	public String getChatFilename() {
+		return this.chatFilename;
 	}
 
 	public static void main(String[] args) {
