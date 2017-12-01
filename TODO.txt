@@ -13,3 +13,6 @@ Long-term:
 * ability to send messages with specified receivers
 	'--> tag system
 * logging system?
+
+Notes:
+* Fix SocketException workaround thrown by PeerListener when corresponding Peer leaves

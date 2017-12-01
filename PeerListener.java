@@ -2,6 +2,7 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.net.SocketException;
 
 public class PeerListener extends Observable implements Runnable {
 	private ObjectInputStream input;
@@ -27,6 +28,8 @@ public class PeerListener extends Observable implements Runnable {
 			try {
 				this.setChanged();
 				this.notifyObservers((Message)this.input.readObject());
+			} catch(SocketException sce) {
+				// Peer left... Stop listening...
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.exit(1);
