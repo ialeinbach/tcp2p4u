@@ -81,6 +81,10 @@ public class Peer implements Runnable {
 		}
 	}
 
+	public void broadcast(Message msg) {
+		this.getEchoHandler().broadcast(msg);
+	}
+
 	public void handleRequest(Socket skt) {
 		Request req = null;
 
@@ -96,6 +100,8 @@ public class Peer implements Runnable {
 
 		if(req.getCommand().equals("stop")) {
 			this.stop();
+		} else if(req.getCommand().equals("broadcast")) {
+			this.broadcast(new MsgMessage(String.join(";", req.getArguments()), this.getPeerId()));
 		}
 	}
 
