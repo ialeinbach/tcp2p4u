@@ -53,12 +53,28 @@ public class Peer implements Runnable {
 				System.exit(1);
 			}
 		}
+
+		this.socketListener.stop();
+		for(PeerHandler ph : this.getPeerHandlers()) {
+			ph.stop();
+		}
 	}
 
 	public void join(InetAddress addr, int port) {
 		try {
 			Socket skt = new Socket(addr, port);
 			this.peerHandlers.add(new PeerHandler(this, skt));
+		} catch(Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+
+	public void stop() {
+		this.active = false;
+
+		try {
+			this.reqListener.close();
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -77,6 +93,10 @@ public class Peer implements Runnable {
 		}
 
 		System.out.println(req);
+
+		if(req.getCommand().equals("stop")) {
+			this.stop();
+		}
 	}
 
 	public static boolean isReqSocket(Socket skt) {

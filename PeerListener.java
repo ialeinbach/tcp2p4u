@@ -12,6 +12,14 @@ public class PeerListener extends Observable implements Runnable {
 		this.active = false;
 	}
 
+	public void stop() {
+		this.active = false;
+	}
+
+	public boolean status() {
+		return this.active;
+	}
+
 	public void run() {
 		this.active = true;
 

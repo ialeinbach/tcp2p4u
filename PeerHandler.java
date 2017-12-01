@@ -33,4 +33,19 @@ public class PeerHandler extends Observable implements Observer {
 	public void talk(Message msg) {
 		this.peerSpeaker.writeMessage(msg);
 	}
+
+	public boolean checkListener() {
+		return this.peerListener.status();
+	}
+
+	public void stop() {
+		this.peerListener.stop();
+
+		try {
+			this.socket.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
 }
