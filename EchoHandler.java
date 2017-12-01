@@ -1,20 +1,25 @@
-import java.io.PrintWriter;
+import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Observer;
 import java.util.Observable;
+import java.nio.charset.Charset;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.StandardOpenOption;
 
 public class EchoHandler extends Observable implements Observer {
 	private ArrayList<PeerHandler> peerHandlers;
 	private HashSet<Message> msgHistory;
-	private final String chatFilename;
+	private final Path chatFilepath;
 	private int peerId;
 
 	public EchoHandler(Peer peer) {
 		this.peerHandlers = peer.getPeerHandlers();
 		this.msgHistory = peer.getMsgHistory();
 		this.peerId = peer.getPeerId();
-		this.chatFilename = peer.getChatFilename();
+		this.chatFilepath = peer.getChatFilepath();
 	}
 
 	public void broadcast(Message msg) {
@@ -24,18 +29,27 @@ public class EchoHandler extends Observable implements Observer {
 		}
 	}
 
+	public Path getChatFilepath() {
+		return this.chatFilepath;
+	}
+
 	public void addToChat(MsgMessage msg) {
-		PrintWriter chat = null;
+		byte[] msgBytes = (msg.toString() + "\n").getBytes(Charset.forName("UTF-8"));
 
 		try {
-			chat = new PrintWriter(this.chatFilename);
-			chat.println(msg);
-//			chat.println(msg.toString());
+			Files.createFile(this.chatFilepath);
+		} catch(FileAlreadyExistsException faee) {
+			// File exists... Not creating...
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
-		} finally {
-			chat.close();
+		}
+
+		try {
+			Files.write(this.getChatFilepath(), msgBytes, StandardOpenOption.APPEND);
+		} catch(Exception e) {
+			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 
@@ -52,7 +66,7 @@ public class EchoHandler extends Observable implements Observer {
 	public boolean receive(Message msg) {
 		if(this.msgHistory.add(msg)) {
 			if(msg.getSender() != this.peerId) {
-				System.out.println(msg);
+				this.addToChat((MsgMessage)msg);
 			}
 
 			this.broadcast(msg);

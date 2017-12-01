@@ -1,4 +1,6 @@
 import java.net.Socket;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -13,7 +15,7 @@ public class Peer implements Runnable {
 	private int peerId;									// unique id for each Peer
 	private HashSet<Message> msgHistory;				// store seen Messages to avoid infinite propogation
 	private ArrayList<PeerHandler> peerHandlers;		// listen/speak to Peers
-	private final String chatFilename;
+	private final Path chatFilepath;
 
 	private SocketListener socketListener;				// listen for new Peers
 	private EchoHandler echoHandler;					// broadcast incoming to all PeerHandlers
@@ -24,7 +26,7 @@ public class Peer implements Runnable {
 		this.peerHandlers = new ArrayList<PeerHandler>();
 		this.msgHistory = new HashSet<Message>();
 		this.active = false;
-		this.chatFilename = System.getProperty("user.home") + "/.peerchat";
+		this.chatFilepath = Paths.get(System.getProperty("user.home") + "/.peerchat.txt");
 
 		this.echoHandler = new EchoHandler(this);
 		this.socketListener = new SocketListener(this, port);
@@ -130,8 +132,8 @@ public class Peer implements Runnable {
 		return this.msgHistory;
 	}
 
-	public String getChatFilename() {
-		return this.chatFilename;
+	public Path getChatFilepath() {
+		return this.chatFilepath;
 	}
 
 	public static void main(String[] args) {
