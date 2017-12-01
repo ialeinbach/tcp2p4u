@@ -22,14 +22,25 @@ public class EchoHandler extends Observable implements Observer {
 	}
 
 	public void update(Observable obs, Object obj) {
-		Message msg = (Message)obj;
+		if(obj instanceof MsgMessage) {
+			MsgMessage msg = (MsgMessage)obj;
+			this.receive(msg);
+		} else if(obj instanceof CtrlMessage) {
+			CtrlMessage msg = (CtrlMessage)obj;
+			this.receive(msg);
+		}
+	}
 
+	public boolean receive(Message msg) {
 		if(this.msgHistory.add(msg)) {
 			if(msg.getSender() != this.peerId) {
 				System.out.println(msg);
 			}
 
 			this.broadcast(msg);
+			return true;
 		}
+
+		return false;
 	}
 }
