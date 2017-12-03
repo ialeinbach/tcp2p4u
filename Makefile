@@ -1,4 +1,3 @@
-JC = javac
 ALL = Message.java \
 CtrlMessage.java \
 MsgMessage.java \
@@ -13,7 +12,15 @@ Request.java
 
 default:
 	@echo -n "Compiling..."
-	@$(JC) $(ALL)
+	@javac $(ALL)
+	@echo "DONE"
+
+starter:
+	@echo -n "Compiling..."
+	@javac $(ALL)
+	@echo "DONE"
+	@echo -n "Creating local peer..."
+	@java Peer 0 &
 	@echo "DONE"
 
 clean:
