@@ -57,11 +57,6 @@ public class Peer implements Runnable {
 				System.exit(1);
 			}
 		}
-
-		this.socketListener.stop();
-		for(PeerHandler ph : this.getPeerHandlers()) {
-			ph.stop();
-		}
 	}
 
 	public void join(InetAddress addr, int port) {
@@ -82,6 +77,12 @@ public class Peer implements Runnable {
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
+		}
+
+		this.socketListener.stop();
+
+		for(PeerHandler ph : this.getPeerHandlers()) {
+			ph.stop();
 		}
 	}
 
