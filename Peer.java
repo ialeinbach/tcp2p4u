@@ -6,7 +6,7 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.net.InetAddress;
 import java.util.HashSet;
-import java.io.File;
+import java.nio.file.Files;
 
 public class Peer implements Runnable {
 	private static final int REQ_PORT = 8888;
@@ -121,8 +121,14 @@ public class Peer implements Runnable {
 
 	public void resetChatHistory() {
 		Path chatFilepath = this.getChatFilepath();
-		Files.deleteIfExists(chatFilepath);
-		Files.createFile(chatFilepath);
+
+		try {
+			Files.deleteIfExists(chatFilepath);
+			Files.createFile(chatFilepath);
+		} catch(Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 	public int getPeerId() {
