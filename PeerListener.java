@@ -18,7 +18,7 @@ public class PeerListener extends Observable implements Runnable {
 
 		if(this.input != null) {
 			try {
-				this.input.close()
+				this.input.close();
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.exit(1);
