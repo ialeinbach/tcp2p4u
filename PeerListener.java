@@ -15,6 +15,15 @@ public class PeerListener extends Observable implements Runnable {
 
 	public void stop() {
 		this.active = false;
+
+		if(this.input != null) {
+			try {
+				this.input.close()
+			} catch(Exception e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
 	}
 
 	public boolean status() {
@@ -30,6 +39,8 @@ public class PeerListener extends Observable implements Runnable {
 				this.notifyObservers((Message)this.input.readObject());
 			} catch(SocketException sce) {
 				// Peer left... Stop listening...
+				this.input = null;
+				this.stop();
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.exit(1);
