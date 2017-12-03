@@ -14,3 +14,8 @@ Run `java PeerRequester` with command line arguments to make requests to your lo
 
 Port 8888 is used to communicate with your locally hosted Peer.   
 Port 40000 is used to communicate with remote Peers.   
+
+## Requests
+
+`broadcast` takes one argument and sends it as a message to every Peer it's connected to.   
+`stop` takes no arguments and terminates the locally running Peer. In its current state, this request may leave the network fractured.   
