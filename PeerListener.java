@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import java.net.SocketException;
+import java.io.EOFException;
 
 public class PeerListener extends Observable implements Runnable {
 	private ObjectInputStream input;
@@ -38,7 +39,9 @@ public class PeerListener extends Observable implements Runnable {
 				this.setChanged();
 				this.notifyObservers((Message)this.input.readObject());
 			} catch(SocketException sce) {
-				// Peer left... Stop listening...
+				// Local Peer stopping...
+			} catch(EOFException eofe) {
+				// Remote Peer left...
 				this.input = null;
 				this.stop();
 			} catch(Exception e) {
