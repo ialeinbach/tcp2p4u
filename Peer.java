@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.net.InetAddress;
 import java.util.HashSet;
+import java.io.File;
 
 public class Peer implements Runnable {
 	private static final int REQ_PORT = 8888;
@@ -27,6 +28,7 @@ public class Peer implements Runnable {
 		this.msgHistory = new HashSet<Message>();
 		this.active = false;
 		this.chatFilepath = Paths.get(System.getProperty("user.home") + "/.peerchat.txt");
+		this.resetChatHistory();
 
 		this.echoHandler = new EchoHandler(this);
 		this.socketListener = new SocketListener(this, port);
@@ -115,6 +117,12 @@ public class Peer implements Runnable {
 		String remote = skt.getRemoteSocketAddress().toString().split(":")[0];
 
 		return local.equals(remote);
+	}
+
+	public void resetChatHistory() {
+		Path chatFilepath = this.getChatFilepath();
+		Files.deleteIfExists(chatFilepath);
+		Files.createFile(chatFilepath);
 	}
 
 	public int getPeerId() {
