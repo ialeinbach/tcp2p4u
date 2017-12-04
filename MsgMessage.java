@@ -1,10 +1,13 @@
 public class MsgMessage extends Message {
-	public MsgMessage(String message, int sender) {
-		super(message, sender);
+	private String content;
+
+	public MsgMessage(String content, int sender) {
+		super(sender);
+		this.content = content;
 	}
 
 	public String getMessage() {
-		return this.getContent();
+		return this.content;
 	}
 
 	public String toString() {
