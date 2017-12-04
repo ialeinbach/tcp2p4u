@@ -10,7 +10,7 @@ import java.nio.file.Files;
 
 public class Peer implements Runnable {
 	private static final int REQ_PORT = 8888;
-	private static final int REQ_MAX_SIZE = 4096;
+	private static final int COM_PORT = 40000;
 
 	private boolean active;
 	private int peerId;									// unique id for each Peer
@@ -22,7 +22,7 @@ public class Peer implements Runnable {
 	private EchoHandler echoHandler;					// broadcast incoming to all PeerHandlers
 	private ServerSocket reqListener;					// listen for requests
 
-	public Peer(int peerId, int port) {
+	public Peer(int peerId) {
 		this.peerId = peerId;
 		this.peerHandlers = new ArrayList<PeerHandler>();
 		this.msgHistory = new HashSet<Message>();
@@ -31,7 +31,7 @@ public class Peer implements Runnable {
 		this.resetChatHistory();
 
 		this.echoHandler = new EchoHandler(this);
-		this.socketListener = new SocketListener(this, port);
+		this.socketListener = new SocketListener(this, COM_PORT);
 
 		try {
 			this.reqListener = new ServerSocket(REQ_PORT);
@@ -61,9 +61,9 @@ public class Peer implements Runnable {
 		}
 	}
 
-	public void join(InetAddress addr, int port) {
+	public void join(InetAddress addr) {
 		try {
-			Socket skt = new Socket(addr, port);
+			Socket skt = new Socket(addr, COM_PORT);
 			this.peerHandlers.add(new PeerHandler(this, skt));
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -158,12 +158,12 @@ public class Peer implements Runnable {
 		}
 
 		int peerId = Integer.parseInt(args[0]);
-		Peer p = new Peer(peerId, 40000);
+		Peer p = new Peer(peerId);
 
 		if(peerId != 0) {
 			try {
 				InetAddress host = InetAddress.getByName("143.229.240.89");
-				p.join(host, 40000);
+				p.join(host);
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.exit(1);
