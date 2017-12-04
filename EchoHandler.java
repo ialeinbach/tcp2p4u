@@ -8,18 +8,21 @@ import java.util.Observable;
 import java.nio.charset.Charset;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.StandardOpenOption;
+import java.net.InetAddress;
 
 public class EchoHandler extends Observable implements Observer {
 	private ArrayList<PeerHandler> peerHandlers;
 	private HashSet<Message> msgHistory;
 	private final Path chatFilepath;
 	private int peerId;
+	private Peer peer;
 
 	public EchoHandler(Peer peer) {
 		this.peerHandlers = peer.getPeerHandlers();
 		this.msgHistory = peer.getMsgHistory();
 		this.peerId = peer.getPeerId();
 		this.chatFilepath = peer.getChatFilepath();
+		this.peer = peer;
 	}
 
 	public void broadcast(Message msg) {
@@ -31,6 +34,10 @@ public class EchoHandler extends Observable implements Observer {
 
 	public Path getChatFilepath() {
 		return this.chatFilepath;
+	}
+
+	public Peer getPeer() {
+		return this.peer;
 	}
 
 	public void addToChat(MsgMessage msg) {
@@ -54,25 +61,26 @@ public class EchoHandler extends Observable implements Observer {
 	}
 
 	public void update(Observable obs, Object obj) {
-		if(obj instanceof MsgMessage) {
-			MsgMessage msg = (MsgMessage)obj;
-			this.receive(msg);
-		} else if(obj instanceof CtrlMessage) {
-			CtrlMessage msg = (CtrlMessage)obj;
-			this.receive(msg);
+		if(obj instanceof Message) {
+			this.receive((Message)obj);
 		}
 	}
 
-	public boolean receive(Message msg) {
-		if(this.msgHistory.add(msg)) {
-			if(msg.getSender() != this.peerId) {
-				this.addToChat((MsgMessage)msg);
-			}
-
-			this.broadcast(msg);
-			return true;
+	public void enact(CtrlMessage msg) {
+		InetAddress[] connections = msg.getConnections();
+		for(InetAddress ip : connections) {
+			this.getPeer().join(ip);
 		}
+	}
 
-		return false;
+	public void receive(Message msg) {
+		if(this.msgHistory.add(msg) && msg.getSender() != this.peerId) {
+			if(msg instanceof MsgMessage) {
+				this.addToChat((MsgMessage)msg);
+				this.broadcast(msg);
+			} else if(msg instanceof CtrlMessage) {
+				this.enact((CtrlMessage)msg);
+			}
+		}
 	}
 }
