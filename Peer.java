@@ -83,6 +83,8 @@ public class Peer implements Runnable {
 
 		this.socketListener.stop();
 
+		this.getEchoHandler().broadcastExit();
+
 		for(PeerHandler ph : this.getPeerHandlers()) {
 			ph.stop();
 		}

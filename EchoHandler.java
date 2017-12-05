@@ -32,6 +32,16 @@ public class EchoHandler extends Observable implements Observer {
 		}
 	}
 
+	public void broadcastExit() {
+		int numPeers = this.peerHandlers.size();
+		InetAddress nextPeer;
+
+		for(int i = 1; i < numPeers; i++) {
+			nextPeer = this.peerHandlers.get(i).getRemoteAddress();
+			this.peerHandlers.get(i - 1).talk(new CtrlMessage(nextPeer, this.peerId));
+		}
+	}
+
 	public Path getChatFilepath() {
 		return this.chatFilepath;
 	}
@@ -67,10 +77,7 @@ public class EchoHandler extends Observable implements Observer {
 	}
 
 	public void enact(CtrlMessage msg) {
-		InetAddress[] connections = msg.getConnections();
-		for(InetAddress ip : connections) {
-			this.getPeer().join(ip);
-		}
+		this.getPeer().join(msg.getConnection());
 	}
 
 	public void receive(Message msg) {

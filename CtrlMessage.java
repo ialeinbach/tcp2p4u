@@ -1,18 +1,18 @@
 import java.net.InetAddress;
 
 public class CtrlMessage extends Message {
-	private InetAddress[] connections;
+	private InetAddress connection;
 
-	public CtrlMessage(InetAddress[] connections, int sender) {
+	public CtrlMessage(InetAddress connection, int sender) {
 		super(sender);
-		this.connections = connections;
+		this.connection = connection;
 	}
 
-	public InetAddress[] getConnections() {
-		return this.connections;
+	public InetAddress getConnection() {
+		return this.connection;
 	}
 
 	public String toString() {
-		return "[Peer " + this.getSender() + " disconnecting] Connect to: " + this.getConnections();
+		return "[Peer " + this.getSender() + " disconnecting] Connect to: " + this.getConnection();
 	}
 }

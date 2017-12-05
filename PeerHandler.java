@@ -3,6 +3,8 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.Observable;
 import java.util.Observer;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 public class PeerHandler extends Observable implements Observer {
 	private PeerListener peerListener;
@@ -24,6 +26,10 @@ public class PeerHandler extends Observable implements Observer {
 
 	public void update(Observable obs, Object obj) {
 		this.talk((Message)obj);
+	}
+
+	public InetAddress getRemoteAddress() {
+		return ((InetSocketAddress)this.socket.getRemoteSocketAddress()).getAddress();
 	}
 
 	public void listen() {
