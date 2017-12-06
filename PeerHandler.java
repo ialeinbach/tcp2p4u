@@ -1,54 +1,67 @@
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.net.Socket;
-import java.util.Observable;
-import java.util.Observer;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.Observable;
+import java.util.Observer;
 
-public class PeerHandler extends Observable implements Observer {
-	private PeerListener peerListener;
-	private PeerSpeaker peerSpeaker;
-	private Socket socket;
+public class PeerHandler extends Observable {
+	private final PeerListener peerListener;
+	private final PeerSpeaker peerSpeaker;
+	private final Socket socket;
+	private final Peer peer;
 
 	public PeerHandler(Peer peer, Socket socket) {
+		this.peer = peer;
+		this.socket = socket;
+
+		PeerListener pl = null;
+		PeerSpeaker ps = null;
+
 		try {
-			this.socket = socket;
-			this.peerSpeaker = new PeerSpeaker(new ObjectOutputStream(socket.getOutputStream()));
-			this.peerListener = new PeerListener(peer, new ObjectInputStream(socket.getInputStream()));
-			this.peerListener.addObserver(peer.getEchoHandler());
-			this.listen();
+			pl = new PeerListener(peer, new ObjectInputStream(socket.getInputStream()));
+			ps = new PeerSpeaker(new ObjectOutputStream(socket.getOutputStream()));
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
-	}
 
-	public void update(Observable obs, Object obj) {
-		this.talk((Message)obj);
+		peerListener = pl;
+		peerSpeaker = ps;
+		peerListener.addObserver(peer.getEchoHandler());
+		listen();
 	}
 
 	public InetAddress getRemoteAddress() {
-		return ((InetSocketAddress)this.socket.getRemoteSocketAddress()).getAddress();
+		return ((InetSocketAddress)socket.getRemoteSocketAddress()).getAddress();
 	}
 
 	public void listen() {
-		new Thread(this.peerListener).start();
+		new Thread(peerListener).start();
 	}
 
 	public void talk(Message msg) {
-		this.peerSpeaker.writeMessage(msg);
+		peerSpeaker.writeMessage(msg);
 	}
 
-	public boolean checkListener() {
-		return this.peerListener.status();
+	public PeerListener getPeerListener() {
+		return peerListener;
+	}
+
+	public PeerSpeaker getPeerSpeaker() {
+		return peerSpeaker;
+	}
+
+	public Socket getSocket() {
+		return socket;
 	}
 
 	public void stop() {
-		this.peerListener.stop();
+		peerListener.stop();
 
 		try {
-			this.socket.close();
+			socket.close();
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
