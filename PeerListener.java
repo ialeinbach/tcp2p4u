@@ -14,21 +14,14 @@ public class PeerListener extends Observable implements Runnable {
 		this.active = false;
 	}
 
-	public void stop() {
-		this.active = false;
-
-		if(this.input != null) {
-			try {
-				this.input.close();
-			} catch(Exception e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
-		}
+	public boolean status() {
+		return active;
 	}
 
-	public boolean status() {
-		return this.active;
+	public void stop() {
+		active = false;
+		setChanged();
+		notifyObservers();
 	}
 
 	public void run() {
@@ -40,10 +33,10 @@ public class PeerListener extends Observable implements Runnable {
 				this.notifyObservers((Message)this.input.readObject());
 			} catch(SocketException sce) {
 				// Local Peer stopping...
+				stop();
 			} catch(EOFException eofe) {
 				// Remote Peer left...
-				this.input = null;
-				this.stop();
+				stop();
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.exit(1);

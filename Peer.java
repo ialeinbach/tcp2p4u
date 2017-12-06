@@ -87,7 +87,7 @@ public class Peer implements Runnable {
 		getEchoHandler().broadcastExit();
 
 		for(PeerHandler ph : getPeerHandlers()) {
-			ph.stop();
+			ph.stop(true);		// parameter: recursive stopping
 		}
 	}
 

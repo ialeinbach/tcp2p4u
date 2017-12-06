@@ -6,7 +6,7 @@ import java.net.InetSocketAddress;
 import java.util.Observable;
 import java.util.Observer;
 
-public class PeerHandler extends Observable {
+public class PeerHandler extends Observable implements Observer {
 	private final PeerListener peerListener;
 	private final PeerSpeaker peerSpeaker;
 	private final Socket socket;
@@ -30,6 +30,7 @@ public class PeerHandler extends Observable {
 		peerListener = pl;
 		peerSpeaker = ps;
 		peerListener.addObserver(peer.getEchoHandler());
+		peerListener.addObserver(this);
 		listen();
 	}
 
@@ -57,8 +58,16 @@ public class PeerHandler extends Observable {
 		return socket;
 	}
 
-	public void stop() {
-		peerListener.stop();
+	public void update(Observable obs, Object obj) {
+		if(obs instanceof PeerListener && obj == null) {
+			stop(false);
+		}
+	}
+
+	public void stop(boolean recursive) {
+		if(recursive) {
+			peerListener.stop();
+		}
 
 		try {
 			socket.close();
@@ -66,5 +75,7 @@ public class PeerHandler extends Observable {
 			e.printStackTrace();
 			System.exit(1);
 		}
+
+		peer.getPeerHandlers().remove(this);
 	}
 }
