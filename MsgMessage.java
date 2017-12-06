@@ -6,7 +6,7 @@ public class MsgMessage extends Message {
 		this.content = content;
 	}
 
-	public String getMessage() {
+	public String getContent() {
 		return this.content;
 	}
 

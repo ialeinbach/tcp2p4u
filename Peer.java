@@ -16,7 +16,7 @@ public class Peer implements Runnable {
 	private boolean active;
 	private final int peerId;								// unique id for each Peer
 
-	private final HashSet<Message> msgHistory;				// detect duplicate Messages to avoid infinite propogation
+	private final HashSet<Message> messageHistory;				// detect duplicate Messages to avoid infinite propogation
 	private final ArrayList<PeerHandler> peerHandlers;		// track adjacent Peers
 	private final Path chatFilepath;
 
@@ -28,7 +28,7 @@ public class Peer implements Runnable {
 		active = false;
 		this.peerId = peerId;
 
-		msgHistory = new HashSet<Message>();
+		messageHistory = new HashSet<Message>();
 		peerHandlers = new ArrayList<PeerHandler>();
 		chatFilepath = Paths.get(System.getProperty("user.home") + "/" + Peer.chatFilename);
 		resetChatHistory();
@@ -149,8 +149,8 @@ public class Peer implements Runnable {
 		return peerId;
 	}
 
-	public HashSet<Message> getMsgHistory() {
-		return msgHistory;
+	public HashSet<Message> getMessageHistory() {
+		return messageHistory;
 	}
 
 	public ArrayList<PeerHandler> getPeerHandlers() {

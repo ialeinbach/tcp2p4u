@@ -8,14 +8,11 @@ public class PeerRequester {
 	private static final int port = 8888;
 
 	public PeerRequester(String[] instruction) {
-		for(String arg : instruction) {
-			if(arg.contains(";")) {
-				System.out.println("Illegal character \";\" ");
-				System.exit(1);
-			}
+		if(isValidInstruction(instruction)) {
+			request(instruction);
+		} else {
+			System.out.println("Invalid request.");
 		}
-
-		request(instruction);
 	}
 
 	public void request(String[] instruction) {
@@ -43,6 +40,16 @@ public class PeerRequester {
 		}
 
 		return os;
+	}
+
+	public boolean isValidInstruction(String[] instruction)
+		for(String arg : instruction) {
+			if(arg.contains(";")) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	public static void main(String[] args) {

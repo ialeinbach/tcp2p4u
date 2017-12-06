@@ -17,24 +17,24 @@ public class EchoHandler extends Observable implements Observer {
 		this.peer = peer;
 	}
 
-	public void broadcast(Message msg) {
-		for(PeerHandler ph : peer.getPeerHandlers()) {
-			ph.talk(msg);
+	public void update(Observable obs, Object obj) {
+		if(obs instanceof PeerListener && obj instanceof Message) {
+			receive((Message)obj);
 		}
 	}
 
-	public void broadcastExit() {
-		ArrayList<PeerHandler> peerHandlers = peer.getPeerHandlers();
-		int numPeers = peerHandlers.size();
-		InetAddress nextPeer;
-
-		for(int i = 1; i < numPeers; i++) {
-			nextPeer = peerHandlers.get(i).getRemoteAddress();
-			peerHandlers.get(i - 1).talk(new CtrlMessage(nextPeer, peer.getPeerId()));
+	public void receive(Message msg) {
+		if(peer.getMsgHistory().add(msg) && msg.getSender() != peer.getPeerId()) {
+			if(msg instanceof MsgMessage) {
+				addToChat((MsgMessage)msg);
+				broadcast(msg);
+			} else if(msg instanceof CtrlMessage) {
+				enact((CtrlMessage)msg);
+			}
 		}
 	}
 
-	public void addToChat(MsgMessage msg) {
+	public void record(MsgMessage msg) {
 		byte[] msgBytes = (msg.toString() + "\n").getBytes(Charset.forName("UTF-8"));
 
 		try {
@@ -54,24 +54,24 @@ public class EchoHandler extends Observable implements Observer {
 		}
 	}
 
-	public void update(Observable obs, Object obj) {
-		if(obs instanceof PeerListener && obj instanceof Message) {
-			receive((Message)obj);
-		}
-	}
-
 	public void enact(CtrlMessage msg) {
 		peer.join(msg.getConnection());
 	}
 
-	public void receive(Message msg) {
-		if(peer.getMsgHistory().add(msg) && msg.getSender() != peer.getPeerId()) {
-			if(msg instanceof MsgMessage) {
-				addToChat((MsgMessage)msg);
-				broadcast(msg);
-			} else if(msg instanceof CtrlMessage) {
-				enact((CtrlMessage)msg);
-			}
+	public void broadcast(Message msg) {
+		for(PeerHandler ph : peer.getPeerHandlers()) {
+			ph.talk(msg);
+		}
+	}
+
+	public void broadcastExit() {
+		ArrayList<PeerHandler> peerHandlers = peer.getPeerHandlers();
+		int numPeers = peerHandlers.size();
+		InetAddress nextPeer;
+
+		for(int i = 1; i < numPeers; i++) {
+			nextPeer = peerHandlers.get(i).getRemoteAddress();
+			peerHandlers.get(i - 1).talk(new CtrlMessage(nextPeer, peer.getPeerId()));
 		}
 	}
 }
