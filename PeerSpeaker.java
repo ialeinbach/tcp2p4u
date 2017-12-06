@@ -1,7 +1,7 @@
 import java.io.ObjectOutputStream;
 
 public class PeerSpeaker {
-	private ObjectOutputStream output;
+	private final ObjectOutputStream output;
 
 	public PeerSpeaker(ObjectOutputStream output) {
 		this.output = output;
@@ -9,7 +9,7 @@ public class PeerSpeaker {
 
 	public void writeMessage(Message msg) {
 		try {
-			this.output.writeObject(msg);
+			output.writeObject(msg);
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
