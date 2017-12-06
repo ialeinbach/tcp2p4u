@@ -11,6 +11,6 @@ public class MsgMessage extends Message {
 	}
 
 	public String toString() {
-		return "[Message from Peer " + this.getSender() + "] " + this.getMessage();
+		return "[Message from Peer " + this.getSender() + "] " + this.getContent();
 	}
 }

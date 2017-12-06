@@ -24,9 +24,9 @@ public class EchoHandler extends Observable implements Observer {
 	}
 
 	public void receive(Message msg) {
-		if(peer.getMsgHistory().add(msg) && msg.getSender() != peer.getPeerId()) {
+		if(peer.getMessageHistory().add(msg) && msg.getSender() != peer.getPeerId()) {
 			if(msg instanceof MsgMessage) {
-				addToChat((MsgMessage)msg);
+				record((MsgMessage)msg);
 				broadcast(msg);
 			} else if(msg instanceof CtrlMessage) {
 				enact((CtrlMessage)msg);

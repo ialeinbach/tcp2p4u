@@ -42,7 +42,7 @@ public class PeerRequester {
 		return os;
 	}
 
-	public boolean isValidInstruction(String[] instruction)
+	public boolean isValidInstruction(String[] instruction) {
 		for(String arg : instruction) {
 			if(arg.contains(";")) {
 				return false;
