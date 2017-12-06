@@ -55,7 +55,7 @@ public class EchoHandler extends Observable implements Observer {
 	}
 
 	public void update(Observable obs, Object obj) {
-		if(obj instanceof Message) {
+		if(obs instanceof PeerListener && obj instanceof Message) {
 			receive((Message)obj);
 		}
 	}

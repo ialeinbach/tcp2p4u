@@ -29,8 +29,11 @@ public class PeerListener extends Observable implements Runnable {
 
 		while(this.active) {
 			try {
-				this.setChanged();
-				this.notifyObservers((Message)this.input.readObject());
+				Object incoming = input.readObject();
+				if(incoming instanceof Message) {
+					setChanged();
+					notifyObservers((Message)incoming);
+				}
 			} catch(SocketException sce) {
 				// Local Peer stopping...
 				stop();
