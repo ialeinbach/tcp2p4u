@@ -1,12 +1,13 @@
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
+import java.io.EOFException;
 import java.net.Socket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Observable;
 import java.util.Observer;
 
-public class PeerHandler extends Observable implements Observer {
+public class PeerHandler {
 	private final PeerListener peerListener;
 	private final PeerSpeaker peerSpeaker;
 	private final Socket socket;
@@ -20,8 +21,10 @@ public class PeerHandler extends Observable implements Observer {
 		PeerSpeaker ps = null;
 
 		try {
-			pl = new PeerListener(peer, new ObjectInputStream(socket.getInputStream()));
+			pl = new PeerListener(peer, this, new ObjectInputStream(socket.getInputStream()));
 			ps = new PeerSpeaker(new ObjectOutputStream(socket.getOutputStream()));
+		} catch(EOFException eofe) {
+			stop();
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -30,7 +33,6 @@ public class PeerHandler extends Observable implements Observer {
 		peerListener = pl;
 		peerSpeaker = ps;
 		peerListener.addObserver(peer.getEchoHandler());
-		peerListener.addObserver(this);
 		listen();
 	}
 
@@ -58,17 +60,7 @@ public class PeerHandler extends Observable implements Observer {
 		return socket;
 	}
 
-	public void update(Observable obs, Object obj) {
-		if(obs instanceof PeerListener && obj == null) {
-			stop(false);
-		}
-	}
-
-	public void stop(boolean recursive) {
-		if(recursive) {
-			peerListener.stop();
-		}
-
+	public void stop() {
 		try {
 			socket.close();
 		} catch(Exception e) {
@@ -77,5 +69,9 @@ public class PeerHandler extends Observable implements Observer {
 		}
 
 		peer.getPeerHandlers().remove(this);
+	}
+
+	public void stopAll() {
+		getPeerListener().stop();
 	}
 }

@@ -8,10 +8,12 @@ import java.util.Observer;
 public class PeerListener extends Observable implements Runnable {
 	private final ObjectInputStream input;
 	private boolean active;
+	private PeerHandler peerHandler;
 
 	// given EchoHandler, PeerHandler as Observers in PeerHandler constructor
-	public PeerListener(Peer peer, ObjectInputStream input) {
+	public PeerListener(Peer peer, PeerHandler peerHandler, ObjectInputStream input) {
 		this.input = input;
+		this.peerHandler = peerHandler;
 		active = false;
 	}
 
@@ -21,8 +23,7 @@ public class PeerListener extends Observable implements Runnable {
 
 	public void stop() {
 		active = false;
-		setChanged();
-		notifyObservers();
+		peerHandler.stop();
 	}
 
 	public void run() {
