@@ -1,59 +1,61 @@
-import java.net.Socket;
+import java.io.ObjectInputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.io.ObjectInputStream;
-import java.net.ServerSocket;
-import java.util.ArrayList;
 import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.nio.file.Files;
 
 public class Peer implements Runnable {
 	private static final int REQ_PORT = 8888;
 	private static final int COM_PORT = 40000;
+	private static final String chatFilename = ".peerchat.txt";
 
 	private boolean active;
-	private int peerId;									// unique id for each Peer
-	private HashSet<Message> msgHistory;				// store seen Messages to avoid infinite propogation
-	private ArrayList<PeerHandler> peerHandlers;		// listen/speak to Peers
+	private final int peerId;								// unique id for each Peer
+
+	private final HashSet<Message> msgHistory;				// detect duplicate Messages to avoid infinite propogation
+	private final ArrayList<PeerHandler> peerHandlers;		// track adjacent Peers
 	private final Path chatFilepath;
 
-	private SocketListener socketListener;				// listen for new Peers
-	private EchoHandler echoHandler;					// broadcast incoming to all PeerHandlers
-	private ServerSocket reqListener;					// listen for requests
+	private final SocketListener socketListener;			// listen for new Peers
+	private final EchoHandler echoHandler;					// broadcast to all PeerHandlers
+	private final ServerSocket requestListener;				// listen for Requests
 
 	public Peer(int peerId) {
+		active = false;
 		this.peerId = peerId;
-		this.peerHandlers = new ArrayList<PeerHandler>();
-		this.msgHistory = new HashSet<Message>();
-		this.active = false;
-		this.chatFilepath = Paths.get(System.getProperty("user.home") + "/.peerchat.txt");
-		this.resetChatHistory();
 
-		this.echoHandler = new EchoHandler(this);
-		this.socketListener = new SocketListener(this, COM_PORT);
+		msgHistory = new HashSet<Message>();
+		peerHandlers = new ArrayList<PeerHandler>();
+		chatFilepath = Paths.get(System.getProperty("user.home") + "/" + Peer.chatFilename);
+		resetChatHistory();
+
+		ServerSocket ss = null;
 
 		try {
-			this.reqListener = new ServerSocket(REQ_PORT);
+			ss = new ServerSocket(REQ_PORT);
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
+
+		requestListener = ss;
+		echoHandler = new EchoHandler(this);
+		socketListener = new SocketListener(this, COM_PORT);
 	}
 
 	public void run() {
-		this.active = true;
-		new Thread(this.socketListener).start();
+		active = true;
+		new Thread(getSocketListener()).start();
 
-		while(this.active) {
+		while(active) {
 			try {
-				Socket req = this.reqListener.accept();
-
-				if(isReqSocket(req)) {
-					handleRequest(req);
-				}
-
-				req.close();
+				Socket request = getRequestListener().accept();
+				handleRequest(request);
+				request.close();
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.exit(1);
@@ -61,10 +63,10 @@ public class Peer implements Runnable {
 		}
 	}
 
-	public void join(InetAddress addr) {
+	public void join(InetAddress addrRemotePeer) {
 		try {
-			Socket skt = new Socket(addr, COM_PORT);
-			this.peerHandlers.add(new PeerHandler(this, skt));
+			Socket sktRemotePeer = new Socket(addrRemotePeer, COM_PORT);
+			getPeerHandlers().add(new PeerHandler(this, sktRemotePeer));
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -72,57 +74,54 @@ public class Peer implements Runnable {
 	}
 
 	public void stop() {
-		this.active = false;
+		active = false;
 
 		try {
-			this.reqListener.close();
+			getRequestListener().close();
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 
-		this.socketListener.stop();
+		getSocketListener().stop();
+		getEchoHandler().broadcastExit();
 
-		this.getEchoHandler().broadcastExit();
-
-		for(PeerHandler ph : this.getPeerHandlers()) {
+		for(PeerHandler ph : getPeerHandlers()) {
 			ph.stop();
 		}
 	}
 
-	public void broadcast(Message msg) {
-		this.getEchoHandler().broadcast(msg);
-	}
+	public void handleRequest(Socket socket) {
+		if(!isRequestSocket(socket)) { return; }
 
-	public void handleRequest(Socket skt) {
-		Request req = null;
+		Request request = null;
 
 		try {
-			ObjectInputStream in = new ObjectInputStream(skt.getInputStream());
-			req = (Request)in.readObject();
+			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+			request = (Request)in.readObject();
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 
-		System.out.println(req);
+		System.out.println(request);
 
-		if(req.getCommand().equals("stop")) {
-			this.stop();
-		} else if(req.getCommand().equals("broadcast")) {
-			this.broadcast(new MsgMessage(String.join(";", req.getArguments()), this.getPeerId()));
+		if(request.getCommand().equals("stop")) {
+			stop();
+		} else if(request.getCommand().equals("broadcast")) {
+			getEchoHandler().broadcast(new MsgMessage(String.join(";", request.getArguments()), getPeerId()));
 		}
 	}
 
-	public static boolean isReqSocket(Socket skt) {
-		String local = skt.getLocalSocketAddress().toString().split(":")[0];
-		String remote = skt.getRemoteSocketAddress().toString().split(":")[0];
+	public static boolean isRequestSocket(Socket requestSocket) {
+		String local = requestSocket.getLocalSocketAddress().toString().split(":")[0];
+		String remote = requestSocket.getRemoteSocketAddress().toString().split(":")[0];
 
 		return local.equals(remote);
 	}
 
 	public void resetChatHistory() {
-		Path chatFilepath = this.getChatFilepath();
+		Path chatFilepath = getChatFilepath();
 
 		try {
 			Files.deleteIfExists(chatFilepath);
@@ -133,24 +132,36 @@ public class Peer implements Runnable {
 		}
 	}
 
+	public boolean status() {
+		return active;
+	}
+
 	public int getPeerId() {
-		return this.peerId;
-	}
-
-	public ArrayList<PeerHandler> getPeerHandlers() {
-		return this.peerHandlers;
-	}
-
-	public EchoHandler getEchoHandler() {
-		return this.echoHandler;
+		return peerId;
 	}
 
 	public HashSet<Message> getMsgHistory() {
-		return this.msgHistory;
+		return msgHistory;
+	}
+
+	public ArrayList<PeerHandler> getPeerHandlers() {
+		return peerHandlers;
 	}
 
 	public Path getChatFilepath() {
-		return this.chatFilepath;
+		return chatFilepath;
+	}
+
+	public SocketListener getSocketListener() {
+		return socketListener;
+	}
+
+	public EchoHandler getEchoHandler() {
+		return echoHandler;
+	}
+
+	public ServerSocket getRequestListener() {
+		return requestListener;
 	}
 
 	public static void main(String[] args) {
@@ -160,18 +171,18 @@ public class Peer implements Runnable {
 		}
 
 		int peerId = Integer.parseInt(args[0]);
-		Peer p = new Peer(peerId);
+		Peer peer = new Peer(peerId);
 
 		if(peerId != 0) {
 			try {
-				InetAddress host = InetAddress.getByName("143.229.240.89");
-				p.join(host);
+				InetAddress ianLaptop = InetAddress.getByName("143.229.240.89");
+				peer.join(ianLaptop);
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.exit(1);
 			}
 		}
 
-		new Thread(p).start();
+		new Thread(peer).start();
 	}
 }
