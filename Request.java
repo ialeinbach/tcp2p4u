@@ -8,11 +8,11 @@ public class Request implements Serializable {
 		int reqSize = raw.length;
 
 		if(reqSize < 1) {
-			this.command = null;
-			this.arguments = null;
+			command = null;
+			arguments = null;
 		} else if(reqSize == 1) {
-			this.command = raw[0];
-			this.arguments = null;
+			command = raw[0];
+			arguments = null;
 		} else {
 			String[] arguments = new String[reqSize - 1];
 
@@ -20,7 +20,7 @@ public class Request implements Serializable {
 				arguments[i - 1] = raw[i];
 			}
 
-			this.command = raw[0];
+			command = raw[0];
 			this.arguments = arguments;
 		}
 	}
@@ -30,26 +30,26 @@ public class Request implements Serializable {
 	}
 
 	public String getCommand() {
-		return this.command;
+		return command;
 	}
 
 	public String[] getArguments() {
-		return this.arguments;
+		return arguments;
 	}
 
 	public String toString() {
-		String command = this.getCommand();
-		String[] arguments = this.getArguments();
+		String command = getCommand();
+		String[] arguments = getArguments();
 
 		String out = "[REQUEST] ";
-		out += (command != null ? command : "NO_CMD") + " ";
+		out += command != null ? command : "NO_CMD";
 
 		if(arguments != null) {
 			for(String arg : arguments) {
 				out += " <" + arg + ">";
 			}
 		} else {
-			out += "NO_ARGS";
+			out += " NO_ARGS";
 		}
 
 		return out;
