@@ -1,17 +1,18 @@
 import java.io.ObjectInputStream;
+import java.io.EOFException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
-import java.net.SocketException;
-import java.io.EOFException;
 
 public class PeerListener extends Observable implements Runnable {
-	private ObjectInputStream input;
+	private final ObjectInputStream input;
 	private boolean active;
 
+	// given EchoHandler, PeerHandler as Observers in PeerHandler constructor
 	public PeerListener(Peer peer, ObjectInputStream input) {
 		this.input = input;
-		this.active = false;
+		active = false;
 	}
 
 	public boolean status() {
@@ -25,9 +26,9 @@ public class PeerListener extends Observable implements Runnable {
 	}
 
 	public void run() {
-		this.active = true;
+		active = true;
 
-		while(this.active) {
+		while(active) {
 			try {
 				Object incoming = input.readObject();
 				if(incoming instanceof Message) {
