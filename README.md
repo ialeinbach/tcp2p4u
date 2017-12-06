@@ -17,5 +17,6 @@ Port 40000 is used to communicate with remote Peers.
 
 ## Requests
 
-`broadcast` takes one argument and sends it as a message to every Peer it's connected to.   
-`stop` takes no arguments and terminates the locally running Peer. In its current state, this request may leave the network fractured.   
+`broadcast` is variadic and sends arguments joined by semicolons as a message to every Peer to which the locally hosted Peer is connected.   
+`stop` takes no arguments and terminates the locally hosted Peer. In its current state, this request may leave the network fractured.   
+`info` prints out basic information about the locally running Peer.
