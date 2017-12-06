@@ -110,6 +110,8 @@ public class Peer implements Runnable {
 			stop();
 		} else if(request.getCommand().equals("broadcast")) {
 			getEchoHandler().broadcast(new MsgMessage(String.join(";", request.getArguments()), getPeerId()));
+		} else if(request.getCommand().equals("info")) {
+			System.out.println(info());
 		}
 	}
 
@@ -130,6 +132,13 @@ public class Peer implements Runnable {
 			e.printStackTrace();
 			System.exit(1);
 		}
+	}
+
+	public String info() {
+		return  String.format("[]==============[]\n" +
+							  "|| peerId: %2d   ||\n" +
+							  "|| numPeers: %2d ||\n" +
+							  "[]==============[]\n", getPeerId(), getPeerHandlers().size());
 	}
 
 	public boolean status() {
