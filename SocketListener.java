@@ -5,48 +5,53 @@ import java.util.ArrayList;
 import java.util.Observable;
 
 public class SocketListener extends Observable implements Runnable {
-	private ServerSocket serverSocket;
-	private Peer peer;
-	private ArrayList<PeerHandler> peerHandlers;
+	private final ServerSocket serverSocket;
+	private final Peer peer;
 	private boolean active;
 
 	public SocketListener(Peer peer, int port) {
+		ServerSocket ss = null;
+
 		try {
-			this.serverSocket = new ServerSocket(port);
+			ss = new ServerSocket(port);
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 
-		this.peerHandlers = peer.getPeerHandlers();
+		serverSocket = ss;
 		this.peer = peer;
-		this.active = false;
+		active = false;
 	}
 
 	public boolean status() {
-		return this.active;
+		return active;
 	}
 
 	public void stop() {
-		this.active = false;
+		active = false;
 
-		try {
-			this.serverSocket.close();
-		} catch(Exception e) {
-			e.printStackTrace();
-			System.exit(1);
+		if(!serverSocket.isClosed()) {
+			try {
+				serverSocket.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
 		}
+
 	}
 
 	public void run() {
-		this.active = true;
+		active = true;
 
-		while(this.active) {
+		while(active) {
 			try {
-				Socket skt = this.serverSocket.accept();		// blocking
-				this.peerHandlers.add(new PeerHandler(this.peer, skt));
+				Socket sktToPeer = serverSocket.accept();		// blocking
+				peer.getPeerHandlers().add(new PeerHandler(peer, sktToPeer));
 			} catch(SocketException se) {
-				// serverSocket.accept() throws SocketException when close() is called
+				// thrown when serverSocket.close() is called
+				stop();
 			} catch(Exception e) {
 				e.printStackTrace();
 				System.exit(1);
