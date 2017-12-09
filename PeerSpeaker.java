@@ -1,4 +1,5 @@
 import java.io.ObjectOutputStream;
+import java.net.SocketException;
 
 public class PeerSpeaker {
 	private final ObjectOutputStream output;
@@ -17,6 +18,9 @@ public class PeerSpeaker {
 		try {
 			output.writeObject(msg);
 		} catch(NullPointerException npe) {
+			System.out.println("Remote Peer left unexpectedly.");
+			stop();
+		} catch(SocketException se) {
 			System.out.println("Remote Peer left unexpectedly.");
 			stop();
 		} catch(Exception e) {
