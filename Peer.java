@@ -153,10 +153,15 @@ public class Peer implements Runnable {
 	}
 
 	public String info() {
-		return  String.format("[]==============[]\n" +
-							  "|| peerId: %2d   ||\n" +
-							  "|| numPeers: %2d ||\n" +
-							  "[]==============[]\n", getPeerId(), getPeerHandlers().size());
+		String out = "--> peerName: " + getPeerId() + "\n" +
+					 "--> numPeers: " + getPeerHandlers().size() + "\n\n" +
+					 "Peer Addresses:\n";
+
+		for(PeerHandler ph : getPeerHandlers()) {
+			out += "  -->" + ph.getRemoteAddress().toString() + "\n";
+		}
+
+		return out;
 	}
 
 	public boolean status() {
