@@ -131,7 +131,36 @@ public class Peer implements Runnable {
 			while(scanner.hasNextLine()) {
 				System.out.println(scanner.nextLine());
 			}
+		} else if(command.equals("join")) {
+			for(String arg : request.getArguments()) {
+				if(isValidIPAddress(arg)) {
+					try {
+						join(InetAddress.getByName(arg));
+					} catch(Exception e) {
+						e.printStackTrace();
+						System.exit(1);
+					}
+				} else {
+					System.out.println("\"" + arg + "\" is not a valid IP address.");
+				}
+			}
 		}
+	}
+
+	public static boolean isValidIPAddress(String rawAddress) {
+		String[] address = rawAddress.split(".");
+
+		if(address.length != 4) {
+			return false;
+		}
+
+		for(String octet : address) {
+			if(!octet.matches("\\d+")) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	public static boolean isRequestSocket(Socket requestSocket) {
