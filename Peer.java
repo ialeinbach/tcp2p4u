@@ -77,6 +77,7 @@ public class Peer implements Runnable {
 		active = false;
 
 		try {
+			Files.deleteIfExists(getChatFilepath());
 			getRequestListener().close();
 		} catch(Exception e) {
 			e.printStackTrace();
