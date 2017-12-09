@@ -24,7 +24,7 @@ public class EchoHandler extends Observable implements Observer {
 	}
 
 	public void receive(Message msg) {
-		if(peer.getMessageHistory().add(msg) && msg.getSender() != peer.getPeerId()) {
+		if(peer.getMessageHistory().add(msg)) {
 			if(msg instanceof MsgMessage) {
 				record((MsgMessage)msg);
 				broadcast(msg);
