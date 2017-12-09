@@ -110,14 +110,15 @@ public class Peer implements Runnable {
 		}
 
 		System.out.println(request);
+		String command = request.getCommand();
 
-		if(request.getCommand().equals("stop")) {
+		if(command.equals("stop")) {
 			stop();
-		} else if(request.getCommand().equals("broadcast")) {
+		} else if(command.equals("broadcast")) {
 			getEchoHandler().receive(new MsgMessage(String.join("; ", request.getArguments()), getPeerId()));
-		} else if(request.getCommand().equals("info")) {
+		} else if(command.equals("info")) {
 			System.out.println(info());
-		} else if(request.getCommand().equals("chat")) {
+		} else if(command.equals("chat")) {
 			System.out.println();
 			Scanner scanner = null;
 
