@@ -8,8 +8,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class PeerHandler {
-	private final PeerListener peerListener;
 	private final PeerSpeaker peerSpeaker;
+	private final PeerListener peerListener;
 	private final Socket socket;
 	private final Peer peer;
 
@@ -17,12 +17,12 @@ public class PeerHandler {
 		this.peer = peer;
 		this.socket = socket;
 
-		PeerListener pl = null;
 		PeerSpeaker ps = null;
+		PeerListener pl = null;
 
 		try {
-			pl = new PeerListener(peer, this, new ObjectInputStream(socket.getInputStream()));
 			ps = new PeerSpeaker(this, new ObjectOutputStream(socket.getOutputStream()));
+			pl = new PeerListener(peer, this, new ObjectInputStream(socket.getInputStream()));
 		} catch(EOFException eofe) {
 			System.out.println("Remote peer left unexpectedly.");
 			stop();
@@ -71,7 +71,7 @@ public class PeerHandler {
 		return socket;
 	}
 
-	public void stopThis() {
+	public void stopFromListener() {
 		try {
 			getSocket().close();
 		} catch(Exception e) {
@@ -83,10 +83,6 @@ public class PeerHandler {
 	}
 
 	public void stop() {
-		try {
-			getPeerListener().stop();
-		} catch(NullPointerException npe) {
-			stopThis();
-		}
+		getPeerListener().stop();
 	}
 }

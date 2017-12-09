@@ -23,7 +23,7 @@ public class PeerListener extends Observable implements Runnable {
 
 	public void stop() {
 		active = false;
-		peerHandler.stop();
+		peerHandler.stopFromListener();
 	}
 
 	public void run() {
@@ -38,7 +38,6 @@ public class PeerListener extends Observable implements Runnable {
 				}
 			} catch(SocketException sce) {
 				// Local Peer stopping...
-				stop();
 			} catch(EOFException eofe) {
 				// Remote Peer left...
 				stop();
