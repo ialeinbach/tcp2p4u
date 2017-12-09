@@ -2,8 +2,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 public abstract class Message implements Serializable {
-	private long timestamp;
-	private int sender;
+	private final long timestamp;
+	private final int sender;
 
 	public Message(int sender) {
 		this.sender = sender;
@@ -11,17 +11,17 @@ public abstract class Message implements Serializable {
 	}
 
 	public int getSender() {
-		return this.sender;
+		return sender;
 	}
 
 	public long getTimestamp() {
-		return this.timestamp;
+		return timestamp;
 	}
 
 	// https://stackoverflow.com/questions/113511/best-implementation-for-hashcode-method
 	public int hashCode() {
-		long t = this.getTimestamp();
-		int s = this.getSender();
+		long t = getTimestamp();
+		int s = getSender();
 
 		int result = 17;
 
@@ -42,7 +42,7 @@ public abstract class Message implements Serializable {
 
 		Message other = (Message)obj;
 
-		return this.getTimestamp() == other.getTimestamp() &&
-			   this.getSender() == other.getSender();
+		return getTimestamp() == other.getTimestamp() &&
+			   getSender() == other.getSender();
 	}
 }
