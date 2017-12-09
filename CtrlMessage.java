@@ -9,10 +9,10 @@ public class CtrlMessage extends Message {
 	}
 
 	public InetAddress getConnection() {
-		return this.connection;
+		return connection;
 	}
 
 	public String toString() {
-		return "[Peer " + this.getSender() + " disconnecting] Connect to: " + this.getConnection();
+		return "[Peer " + getSender() + " disconnecting] Connect to: " + getConnection();
 	}
 }
