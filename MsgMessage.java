@@ -7,10 +7,10 @@ public class MsgMessage extends Message {
 	}
 
 	public String getContent() {
-		return this.content;
+		return content;
 	}
 
 	public String toString() {
-		return "[Message from Peer " + this.getSender() + "] " + this.getContent();
+		return "[From Peer " + getSender() + "] " + getContent();
 	}
 }
