@@ -153,7 +153,7 @@ public class Peer implements Runnable {
 	}
 
 	public String info() {
-		String out = "--> peerName: " + getPeerId() + "\n" +
+		String out = "--> peerId: " + getPeerId() + "\n" +
 					 "--> numPeers: " + getPeerHandlers().size() + "\n\n" +
 					 "Peer Addresses:\n";
 
