@@ -1,4 +1,5 @@
 import java.io.ObjectInputStream;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -7,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Scanner;
 
 public class Peer implements Runnable {
 	private static final int REQ_PORT = 8888;
@@ -115,6 +117,19 @@ public class Peer implements Runnable {
 			getEchoHandler().broadcast(new MsgMessage(String.join(";", request.getArguments()), getPeerId()));
 		} else if(request.getCommand().equals("info")) {
 			System.out.println(info());
+		} else if(request.getCommand().equals("chat")) {
+			System.out.println();
+			Scanner scanner = null;
+
+			try {
+				scanner = new Scanner(new File(getChatFilepath().toString()));
+			} catch(Exception e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+			while(scanner.hasNextLine()) {
+				System.out.println(scanner.nextLine());
+			}
 		}
 	}
 
