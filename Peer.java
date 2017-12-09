@@ -114,7 +114,7 @@ public class Peer implements Runnable {
 		if(request.getCommand().equals("stop")) {
 			stop();
 		} else if(request.getCommand().equals("broadcast")) {
-			getEchoHandler().broadcast(new MsgMessage(String.join(";", request.getArguments()), getPeerId()));
+			getEchoHandler().receive(new MsgMessage(String.join("; ", request.getArguments()), getPeerId()));
 		} else if(request.getCommand().equals("info")) {
 			System.out.println(info());
 		} else if(request.getCommand().equals("chat")) {
