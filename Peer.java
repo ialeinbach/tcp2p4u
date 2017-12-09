@@ -86,8 +86,10 @@ public class Peer implements Runnable {
 		getSocketListener().stop();
 		getEchoHandler().broadcastExit();
 
-		for(PeerHandler ph : getPeerHandlers()) {
-			ph.stopAll();
+		ArrayList<PeerHandler> peerHandlers = getPeerHandlers();
+		while(peerHandlers.size() > 0) {
+			System.out.println("Stopping a PeerHandler.");
+			peerHandlers.get(0).stop();
 		}
 	}
 

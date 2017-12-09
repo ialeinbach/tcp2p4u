@@ -59,8 +59,22 @@ public class EchoHandler extends Observable implements Observer {
 	}
 
 	public void broadcast(Message msg) {
-		for(PeerHandler ph : peer.getPeerHandlers()) {
-			ph.talk(msg);
+		ArrayList<PeerHandler> peerHandlers = peer.getPeerHandlers();
+		int numPeers = peerHandlers.size();
+
+		int i = 0;
+		while(i < numPeers) {
+			try {
+				peerHandlers.get(i).talk(msg);
+			} catch(NullPointerException npe) {
+				// i^th Peer left, so:
+				//  - Remove i^th PeerHandler
+				//  - Try again with (i+1)^th Peer now in i^th position
+				peerHandlers.get(i).stop();
+				continue;
+			}
+
+			i++;
 		}
 	}
 
@@ -69,9 +83,29 @@ public class EchoHandler extends Observable implements Observer {
 		int numPeers = peerHandlers.size();
 		InetAddress nextPeer;
 
-		for(int i = 1; i < numPeers; i++) {
-			nextPeer = peerHandlers.get(i).getRemoteAddress();
-			peerHandlers.get(i - 1).talk(new CtrlMessage(nextPeer, peer.getPeerId()));
+		int i = 1;
+		while(i < numPeers) {
+			try {
+				nextPeer = peerHandlers.get(i).getRemoteAddress();
+			} catch(NullPointerException npe) {
+				// i^th Peer left, so:
+				//  - Remove i^th PeerHandler
+				//  - Try again with (i+1)^th Peer now in i^th position
+				peerHandlers.get(i).stop();
+				continue;
+			}
+
+			try {
+				peerHandlers.get(i - 1).talk(new CtrlMessage(nextPeer, peer.getPeerId()));
+			} catch(NullPointerException npe) {
+				// (i-1)^th Peer gone, so:
+				//  - Remove (i-1)^th PeerHandler
+				//  - Try again with i^th Peer now in (i-1)^th position
+				peerHandlers.get(--i).stop();
+				continue;
+			}
+
+			i++;
 		}
 	}
 }
