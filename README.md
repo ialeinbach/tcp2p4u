@@ -22,3 +22,5 @@ Port 40000 is used to communicate with remote Peers.
 `stop` takes no arguments and terminates the locally hosted Peer. In its current state, this request may leave the network fractured.   
 
 `info` prints out basic information about the locally running Peer.
+
+`chat` prints out the chat.   
