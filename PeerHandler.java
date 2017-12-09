@@ -22,13 +22,10 @@ public class PeerHandler {
 
 		try {
 			pl = new PeerListener(peer, this, new ObjectInputStream(socket.getInputStream()));
-			ps = new PeerSpeaker(new ObjectOutputStream(socket.getOutputStream()));
+			ps = new PeerSpeaker(this, new ObjectOutputStream(socket.getOutputStream()));
 		} catch(EOFException eofe) {
 			System.out.println("Remote peer left unexpectedly.");
 			stop();
-			peerListener = pl;
-			peerSpeaker = ps;
-			return;
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -43,7 +40,6 @@ public class PeerHandler {
 		} catch(NullPointerException npe) {
 			System.out.println("Remote peer left unexpectedly.");
 			stop();
-			return;
 		}
 	}
 
@@ -51,12 +47,16 @@ public class PeerHandler {
 		return ((InetSocketAddress)socket.getRemoteSocketAddress()).getAddress();
 	}
 
-	public void listen() throws NullPointerException {
-		new Thread(peerListener).start();
+	public void listen() {
+		new Thread(getPeerListener()).start();
 	}
 
 	public void talk(Message msg) {
 		peerSpeaker.writeMessage(msg);
+	}
+
+	public boolean status() {
+		return getPeerListener().status();
 	}
 
 	public PeerListener getPeerListener() {
@@ -71,9 +71,9 @@ public class PeerHandler {
 		return socket;
 	}
 
-	public void stop() {
+	public void stopThis() {
 		try {
-			socket.close();
+			getSocket().close();
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -82,11 +82,11 @@ public class PeerHandler {
 		peer.getPeerHandlers().remove(this);
 	}
 
-	public void stopAll() {
+	public void stop() {
 		try {
 			getPeerListener().stop();
 		} catch(NullPointerException npe) {
-			stop();
+			stopThis();
 		}
 	}
 }
