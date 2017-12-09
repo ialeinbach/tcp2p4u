@@ -23,7 +23,7 @@ public class PeerListener extends Observable implements Runnable {
 
 	public void stop() {
 		active = false;
-		peerHandler.stopFromListener();
+		peerHandler.stop();
 	}
 
 	public void run() {

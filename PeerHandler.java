@@ -71,18 +71,18 @@ public class PeerHandler {
 		return socket;
 	}
 
-	public void stopFromListener() {
+	public void stop() {
 		try {
-			getSocket().close();
+			PeerListener peerListener = getPeerListener();
+			if(peerListener.status()) {
+				peerListener.stop();
+			} else {
+				getSocket().close();
+				peer.getPeerHandlers().remove(this);
+			}
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
-
-		peer.getPeerHandlers().remove(this);
-	}
-
-	public void stop() {
-		getPeerListener().stop();
 	}
 }
