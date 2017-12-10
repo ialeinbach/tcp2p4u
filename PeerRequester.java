@@ -16,6 +16,11 @@ public class PeerRequester {
 	}
 
 	public void request(String[] instruction) {
+		if(instruction.length >= 2 && instruction[0].equals("start")) {
+			new Thread(new Peer(Integer.parseInt(instruction[1]))).start();
+			return;
+		}
+
 		try {
 			ObjectOutputStream output = new ObjectOutputStream(osToLocalPeer());
 			output.writeObject(new Request(instruction));

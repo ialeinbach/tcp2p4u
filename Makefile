@@ -19,8 +19,8 @@ starter:
 	@echo -n "Compiling..."
 	@javac $(ALL)
 	@echo "DONE"
-	@echo -n "Creating local peer..."
-	@java Peer 0 &
+	@echo -n "Creating starter peer..."
+	@java PeerRequester start 0 &
 	@echo "DONE"
 
 clean:

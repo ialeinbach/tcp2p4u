@@ -225,26 +225,4 @@ public class Peer implements Runnable {
 	public ServerSocket getRequestListener() {
 		return requestListener;
 	}
-
-	public static void main(String[] args) {
-		if(args.length != 1) {
-			System.out.println("Invalid arguments.");
-			System.exit(1);
-		}
-
-		int peerId = Integer.parseInt(args[0]);
-		Peer peer = new Peer(peerId);
-
-		if(peerId != 0) {
-			try {
-				InetAddress ianLaptop = InetAddress.getByName("143.229.240.89");
-				peer.join(ianLaptop);
-			} catch(Exception e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
-		}
-
-		new Thread(peer).start();
-	}
 }
