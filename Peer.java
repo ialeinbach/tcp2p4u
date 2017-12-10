@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -69,6 +70,8 @@ public class Peer implements Runnable {
 		try {
 			Socket sktRemotePeer = new Socket(addrRemotePeer, COM_PORT);
 			getPeerHandlers().add(new PeerHandler(this, sktRemotePeer));
+		} catch(ConnectException ce) {
+			System.out.println("No peer found at address " + addrRemotePeer.toString());
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
