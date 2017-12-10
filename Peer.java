@@ -148,7 +148,7 @@ public class Peer implements Runnable {
 	}
 
 	public static boolean isValidIPAddress(String rawAddress) {
-		String[] address = rawAddress.split(".");
+		String[] address = rawAddress.split("\\.");
 
 		if(address.length != 4) {
 			return false;
