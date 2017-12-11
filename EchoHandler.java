@@ -58,19 +58,20 @@ public class EchoHandler extends Observable implements Observer {
     ArrayList<PeerHandler> peerHandlers = peer.getPeerHandlers();
     int numPeers = peerHandlers.size();
 
-    int i = 0;
-    while (i < numPeers) {
+    int peerCounter = 0;
+    while (peerCounter < numPeers) {
       try {
-        peerHandlers.get(i).talk(msg);
+        peerHandlers.get(peerCounter).talk(msg);
       } catch (NullPointerException npe) {
+        // i = peerCounter (for sake of comment brevity)
         // i^th Peer left, so:
         //  - Remove i^th PeerHandler
         //  - Try again with (i+1)^th Peer now in i^th position
-        peerHandlers.get(i).stop();
+        peerHandlers.get(peerCounter).stop();
         continue;
       }
 
-      i++;
+      peerCounter++;
     }
   }
 
@@ -79,29 +80,30 @@ public class EchoHandler extends Observable implements Observer {
     int numPeers = peerHandlers.size();
     InetAddress nextPeer;
 
-    int i = 1;
-    while (i < numPeers) {
+    int peerCounter = 1;
+    while (peerCounter < numPeers) {
       try {
-        nextPeer = peerHandlers.get(i).getRemoteAddress();
+        nextPeer = peerHandlers.get(peerCounter).getRemoteAddress();
       } catch (NullPointerException npe) {
+        // i = peerCounter (for sake of comment brevity)
         // i^th Peer left, so:
         //  - Remove i^th PeerHandler
         //  - Try again with (i+1)^th Peer now in i^th position
-        peerHandlers.get(i).stop();
+        peerHandlers.get(peerCounter).stop();
         continue;
       }
 
       try {
-        peerHandlers.get(i - 1).talk(new CtrlMessage(nextPeer, peer.getPeerId()));
+        peerHandlers.get(peerCounter - 1).talk(new CtrlMessage(nextPeer, peer.getPeerId()));
       } catch (NullPointerException npe) {
         // (i-1)^th Peer gone, so:
         //  - Remove (i-1)^th PeerHandler
         //  - Try again with i^th Peer now in (i-1)^th position
-        peerHandlers.get(--i).stop();
+        peerHandlers.get(--peerCounter).stop();
         continue;
       }
 
-      i++;
+      peerCounter++;
     }
   }
 }

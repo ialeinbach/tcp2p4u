@@ -20,13 +20,13 @@ public abstract class Message implements Serializable {
 
   // https://stackoverflow.com/questions/113511/best-implementation-for-hashcode-method
   public int hashCode() {
-    long t = getTimestamp();
-    int s = getSender();
+    long timestamp = getTimestamp();
+    int sender = getSender();
 
     int result = 17;
 
-    result = 37 * result + (int)(t ^ (t >>> 32)); // >>> is a logical right shift
-    result = 37 * result + s;
+    result = 37 * result + (int)(timestamp ^ (timestamp >>> 32)); // >>> is a logical right shift
+    result = 37 * result + sender;
 
     return result;
   }
