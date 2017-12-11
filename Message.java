@@ -2,47 +2,47 @@ import java.io.Serializable;
 import java.util.Date;
 
 public abstract class Message implements Serializable {
-	private final long timestamp;
-	private final int sender;
+  private final long timestamp;
+  private final int sender;
 
-	public Message(int sender) {
-		this.sender = sender;
-		this.timestamp = new Date().getTime();
-	}
+  public Message(int sender) {
+    this.sender = sender;
+    this.timestamp = new Date().getTime();
+  }
 
-	public int getSender() {
-		return sender;
-	}
+  public int getSender() {
+    return sender;
+  }
 
-	public long getTimestamp() {
-		return timestamp;
-	}
+  public long getTimestamp() {
+    return timestamp;
+  }
 
-	// https://stackoverflow.com/questions/113511/best-implementation-for-hashcode-method
-	public int hashCode() {
-		long t = getTimestamp();
-		int s = getSender();
+  // https://stackoverflow.com/questions/113511/best-implementation-for-hashcode-method
+  public int hashCode() {
+    long t = getTimestamp();
+    int s = getSender();
 
-		int result = 17;
+    int result = 17;
 
-		result = 37 * result + (int)(t ^ (t >>> 32));	// >>> is a logical right shift
-		result = 37 * result + s;
+    result = 37 * result + (int)(t ^ (t >>> 32)); // >>> is a logical right shift
+    result = 37 * result + s;
 
-		return result;
-	}
+    return result;
+  }
 
-	public boolean equals(Object obj) {
-		if(this == obj) {
-			return true;
-		}
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
 
-		if(!(obj instanceof Message)) {
-			return false;
-		}
+    if (!(obj instanceof Message)) {
+      return false;
+    }
 
-		Message other = (Message)obj;
+    Message other = (Message)obj;
 
-		return getTimestamp() == other.getTimestamp() &&
-			   getSender() == other.getSender();
-	}
+    return getTimestamp() == other.getTimestamp()
+           && getSender() == other.getSender();
+  }
 }
