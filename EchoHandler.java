@@ -29,7 +29,7 @@ public class EchoHandler extends Observable implements Observer {
         record((MsgMessage)msg);
         broadcast(msg);
       } else if (msg instanceof CtrlMessage) {
-        enact((CtrlMessage)msg);
+        peer.join(((CtrlMessage)msg).getConnection());
       }
     }
   }
@@ -52,10 +52,6 @@ public class EchoHandler extends Observable implements Observer {
       e.printStackTrace();
       System.exit(1);
     }
-  }
-
-  public void enact(CtrlMessage msg) {
-    peer.join(msg.getConnection());
   }
 
   public void broadcast(Message msg) {
