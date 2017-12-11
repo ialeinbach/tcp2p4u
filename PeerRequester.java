@@ -7,6 +7,12 @@ import java.nio.charset.Charset;
 public class PeerRequester {
   private static final int port = 8888;
 
+  /**
+   * Checks whether command line arguments comprise a valid instruction and
+   * handles request if it is the case.
+   *
+   * @param instruction instructions from the user
+   */
   public PeerRequester(String[] instruction) {
     if (isValidInstruction(instruction)) {
       request(instruction);
@@ -15,6 +21,12 @@ public class PeerRequester {
     }
   }
 
+  /**
+   * Handles some instructions locally or writes it as a Request to
+   * the locally hosted Peed.
+   *
+   * @param instruction instructions from the user
+   */
   public void request(String[] instruction) {
     if (instruction.length >= 2 && instruction[0].equals("start")) {
       new Thread(new Peer(Integer.parseInt(instruction[1]))).start();
@@ -30,6 +42,11 @@ public class PeerRequester {
     }
   }
 
+  /**
+   * Creates Socket to locally hosted Peer and returns its OutputStream.
+   *
+   * @return an OutputStream to the locally hosted Peer
+   */
   public OutputStream osToLocalPeer() {
     OutputStream os = null;
 
@@ -47,6 +64,13 @@ public class PeerRequester {
     return os;
   }
 
+  /**
+   * Checks whether some instructions from the user are valid.
+   *
+   * @param instruction instructions from the user
+   *
+   * @return whether instruction is valid
+   */
   public boolean isValidInstruction(String[] instruction) {
     for (String arg : instruction) {
       if (arg.contains(";")) {
@@ -57,6 +81,9 @@ public class PeerRequester {
     return true;
   }
 
+  /**
+   *  Passes command line arguments to constructor, where class behavior lies.
+   */
   public static void main(String[] args) {
     new PeerRequester(args);
   }

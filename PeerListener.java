@@ -10,22 +10,39 @@ public class PeerListener extends Observable implements Runnable {
   private boolean active;
   private PeerHandler peerHandler;
 
-  // given EchoHandler, PeerHandler as Observers in PeerHandler constructor
+  /**
+   * Receives parameters into fields.
+   *
+   * @param peer the parent Peer
+   * @param peerHandler the parent PeerHandler
+   * @param input an ObjectInputStream through which a remote Peer sends Messages
+   */
   public PeerListener(Peer peer, PeerHandler peerHandler, ObjectInputStream input) {
     this.input = input;
     this.peerHandler = peerHandler;
     active = false;
   }
 
+  /**
+   * Returns the status of this PeerListener.
+   *
+   * @return whether PeerListener is active
+   */
   public boolean status() {
     return active;
   }
 
+  /**
+   * Stops parent PeerHandler.
+   */
   public void stop() {
     active = false;
     peerHandler.stop();
   }
 
+  /**
+   * Receive Messages from the corrseponding remote Peer and passes them the parent PeerHandler.
+   */
   public void run() {
     active = true;
 

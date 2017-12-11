@@ -13,16 +13,38 @@ import java.util.Observer;
 public class EchoHandler extends Observable implements Observer {
   private final Peer peer;
 
+  /**
+   * Receives parameters into fields.
+   *
+   * @param peer the Peer that owns this EchoHandler
+   */
   public EchoHandler(Peer peer) {
     this.peer = peer;
   }
 
+
+  /**
+   * Verifies observed object is a PeerListener and that the object passed is
+   * a Message object.
+   *
+   * @param obs the object that called notifyObservers()
+   * @param obj the object passed by when notifyObservers() was called
+   */
   public void update(Observable obs, Object obj) {
     if (obs instanceof PeerListener && obj instanceof Message) {
       receive((Message)obj);
     }
   }
 
+  /**
+   * Receives incoming Message object, stores in MessageHistory, and performs
+   * actions that depend on the child class of Message the object is.
+   *
+   * <p>MsgMessage: record in chat and broadcast</p>
+   * <p>CtrlMessage: connect Peer to specified address</p>
+   *
+   * @param msg an incoming Message object
+   */
   public void receive(Message msg) {
     if (peer.getMessageHistory().add(msg)) {
       if (msg instanceof MsgMessage) {
@@ -34,6 +56,11 @@ public class EchoHandler extends Observable implements Observer {
     }
   }
 
+  /**
+   * Records a MsgMessage in the chat file.
+   *
+   * @param msg an incoming MsgMessage object
+   */
   public void record(MsgMessage msg) {
     byte[] msgBytes = (msg.toString() + "\n").getBytes(Charset.forName("UTF-8"));
 
@@ -54,6 +81,11 @@ public class EchoHandler extends Observable implements Observer {
     }
   }
 
+  /**
+   * Broadcasts a Message to all PeerHandlers.
+   *
+   * @param msg an outgoing Message object
+   */
   public void broadcast(Message msg) {
     ArrayList<PeerHandler> peerHandlers = peer.getPeerHandlers();
     int numPeers = peerHandlers.size();
@@ -75,6 +107,10 @@ public class EchoHandler extends Observable implements Observer {
     }
   }
 
+  /**
+   * Broadcast a CtrlMessage to PeerHandlers before stopping the Peer in
+   * order to avoid network fracturing.
+   */
   public void broadcastExit() {
     ArrayList<PeerHandler> peerHandlers = peer.getPeerHandlers();
     int numPeers = peerHandlers.size();
