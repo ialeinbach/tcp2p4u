@@ -26,3 +26,5 @@ Port 40000 is used to communicate with remote Peers.
 `chat` prints out the chat.   
 
 `join` is variadic and instructs the locally hosted Peer to connect to remote Peers at given IPs.   
+
+`start` takes no arguments and creates a locally hosted Peer.
