@@ -5,19 +5,13 @@ TCP2P4U is an in-terminal peer-to-peer TCP chat.
 ## Usage
 
 Run `make` to compile.   
-Run `make starter` to compile and create a starter Peer.   
+Run `make peer` to compile and create a local Peer with `peerId = 0`.   
 Run `make clean` to delete class files.   
-Run `java Peer X &` to create a peer with a peerId of X.   
-Run `java PeerRequester` with command line arguments to make requests to your locally hosted Peer.   
+Run `java PeerRequester` with command line arguments to run peer commands.   
 
-## Ports
+## Peer Commands
 
-Port 8888 is used to communicate with your locally hosted Peer.   
-Port 40000 is used to communicate with remote Peers.   
-
-## Requests
-
-`broadcast` is variadic and sends arguments joined by semicolons as a message to every Peer to which the locally hosted Peer is connected.   
+`broadcast` sends arguments joined by semicolons as a message to every Peer to which the locally hosted Peer is connected.   
 
 `stop` takes no arguments and terminates the locally hosted Peer. In its current state, this request may leave the network fractured.   
 
@@ -28,3 +22,8 @@ Port 40000 is used to communicate with remote Peers.
 `join` is variadic and instructs the locally hosted Peer to connect to remote Peers at given IPs.   
 
 `start` takes no arguments and creates a locally hosted Peer.
+
+## Ports
+
+Port 8888 is used to communicate with your locally hosted Peer.   
+Port 40000 is used to communicate with remote Peers.   
