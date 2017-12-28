@@ -15,11 +15,11 @@ default:
 	@javac $(ALL)
 	@echo "DONE"
 
-starter:
+peer:
 	@echo -n "Compiling..."
 	@javac $(ALL)
 	@echo "DONE"
-	@echo -n "Creating starter peer..."
+	@echo -n "Creating local peer..."
 	@java PeerRequester start 0 &
 	@echo "DONE"
 
