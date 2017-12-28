@@ -1,8 +1,3 @@
-Short-term:
-* Actually handle requests that Peers receive from PeerRequesters or PeerHandlers
-* When peer exits, remove corresponding observer
-
-Long-term:
 * optimize hashset implementation of message redundancy checking
 * design scheme for peer to join existing network
 	'--> some sort of handshake to exchange ids?
@@ -13,6 +8,3 @@ Long-term:
 * ability to send messages with specified receivers
 	'--> tag system
 * logging system?
-
-Notes:
-* Fix SocketException workaround thrown by PeerListener when corresponding Peer leaves
