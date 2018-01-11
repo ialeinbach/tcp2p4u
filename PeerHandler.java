@@ -29,7 +29,7 @@ public class PeerHandler {
 
     try {
       ps = new PeerSpeaker(this, new ObjectOutputStream(socket.getOutputStream()));
-      pl = new PeerListener(peer, this, new ObjectInputStream(socket.getInputStream()));
+      pl = new PeerListener(this, new ObjectInputStream(socket.getInputStream()));
     } catch (EOFException eofe) {
       System.out.println("Remote peer left unexpectedly.");
       stop();
@@ -112,22 +112,19 @@ public class PeerHandler {
   }
 
   /**
-   * Stops this PeerHandler safely. Ensures PeerListener has stopped, then closes the Socket
-   * to the remote Peer, consequently closing the corresponding I/O streams. Finally, the
-   * PeerHandler removes itself from the parent Peer's collection of PeerHandlers.
+   * Terminates this PeerHandler safely.
+   *   1) Close socket.
+   *     a) Causes corresponding I/O streams to close.
+   *     b) PeerListener handles SocketException by terminating itself.
+   *   2) Tell parent Peer to remove this PeerHandler from PeerHandler ArrayList.
    */
   public void stop() {
     try {
-      PeerListener peerListener = getPeerListener();
-      if (peerListener.status()) {
-        peerListener.stop();
-      } else {
-        getSocket().close();
-        peer.getPeerHandlers().remove(this);
-      }
-    } catch (Exception e) {
+      getSocket().close();
+    } catch(Exception e) {
       e.printStackTrace();
       System.exit(1);
     }
+    peer.forgetPeerHandler(this);
   }
 }

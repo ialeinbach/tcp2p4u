@@ -36,7 +36,6 @@ public class PeerListener extends Observable implements Runnable {
    * Stops parent PeerHandler.
    */
   public void stop() {
-    active = false;
     peerHandler.stop();
   }
 
@@ -53,10 +52,12 @@ public class PeerListener extends Observable implements Runnable {
           setChanged();
           notifyObservers((Message)incoming);
         }
-      } catch (SocketException sce) {
+      } catch (SocketException se) {
         // Local Peer stopping...
+        active = false;
       } catch (EOFException eofe) {
         // Remote Peer left...
+        active = false;
         stop();
       } catch (Exception e) {
         e.printStackTrace();

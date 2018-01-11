@@ -88,22 +88,10 @@ public class EchoHandler extends Observable implements Observer {
    */
   public void broadcast(Message msg) {
     ArrayList<PeerHandler> peerHandlers = peer.getPeerHandlers();
-    int numPeers = peerHandlers.size();
-
-    int peerCounter = 0;
-    while (peerCounter < numPeers) {
-      try {
-        peerHandlers.get(peerCounter).talk(msg);
-      } catch (NullPointerException npe) {
-        // i = peerCounter (for sake of comment brevity)
-        // i^th Peer left, so:
-        //  - Remove i^th PeerHandler
-        //  - Try again with (i+1)^th Peer now in i^th position
-        peerHandlers.get(peerCounter).stop();
-        continue;
+    synchronized(peerHandlers) {
+      for (PeerHandler ph : peerHandlers) {
+        ph.talk(msg);
       }
-
-      peerCounter++;
     }
   }
 
@@ -113,33 +101,16 @@ public class EchoHandler extends Observable implements Observer {
    */
   public void broadcastExit() {
     ArrayList<PeerHandler> peerHandlers = peer.getPeerHandlers();
-    int numPeers = peerHandlers.size();
-    InetAddress nextPeer;
+    synchronized(peerHandlers) {
+      int numPeers = peerHandlers.size();
+      InetAddress prevPeer = peerHandlers.get(0).getRemoteAddress();
+      PeerHandler currPeer;
 
-    int peerCounter = 1;
-    while (peerCounter < numPeers) {
-      try {
-        nextPeer = peerHandlers.get(peerCounter).getRemoteAddress();
-      } catch (NullPointerException npe) {
-        // i = peerCounter (for sake of comment brevity)
-        // i^th Peer left, so:
-        //  - Remove i^th PeerHandler
-        //  - Try again with (i+1)^th Peer now in i^th position
-        peerHandlers.get(peerCounter).stop();
-        continue;
+      for(int i = 1; i < numPeers; i++) {
+        currPeer = peerHandlers.get(i);
+        currPeer.talk(new CtrlMessage(prevPeer, peer.getPeerId()));
+        prevPeer = currPeer.getRemoteAddress();
       }
-
-      try {
-        peerHandlers.get(peerCounter - 1).talk(new CtrlMessage(nextPeer, peer.getPeerId()));
-      } catch (NullPointerException npe) {
-        // (i-1)^th Peer gone, so:
-        //  - Remove (i-1)^th PeerHandler
-        //  - Try again with i^th Peer now in (i-1)^th position
-        peerHandlers.get(--peerCounter).stop();
-        continue;
-      }
-
-      peerCounter++;
     }
   }
 }

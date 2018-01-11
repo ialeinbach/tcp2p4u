@@ -66,8 +66,11 @@ public class SocketListener extends Observable implements Runnable {
 
     while (active) {
       try {
-        Socket sktToPeer = serverSocket.accept();   // blocking
-        peer.getPeerHandlers().add(new PeerHandler(peer, sktToPeer));
+        Socket sktToPeer = serverSocket.accept();
+        ArrayList<PeerHandler> peerHandlers = peer.getPeerHandlers();
+        synchronized(peerHandlers) {
+          peerHandlers.add(new PeerHandler(peer, sktToPeer));
+        }
       } catch (SocketException se) {
         // thrown when serverSocket.close() is called
         stop();

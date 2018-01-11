@@ -110,9 +110,27 @@ public class Peer implements Runnable {
     getEchoHandler().broadcastExit();
 
     ArrayList<PeerHandler> peerHandlers = getPeerHandlers();
-    while (peerHandlers.size() > 0) {
-      System.out.println("Stopping a PeerHandler.");
-      peerHandlers.get(0).stop();
+    synchronized(peerHandlers) {
+      while (peerHandlers.size() > 0) {
+        System.out.println("Stopping a PeerHandler.");
+        PeerHandler ph = peerHandlers.get(0);
+        synchronized(ph) {
+          ph.stop();
+        }
+        peerHandlers.remove(ph);
+      }
+    }
+  }
+
+  /**
+   * Safely remove a PeerHandler from the ArrayList of PeerHandlers.
+   *
+   * @param ph PeerHandler to be removed.
+   */
+  public void forgetPeerHandler(PeerHandler ph) {
+    ArrayList<PeerHandler> peerHandlers = getPeerHandlers();
+    synchronized(peerHandlers) {
+      peerHandlers.remove(ph);
     }
   }
 
@@ -234,14 +252,19 @@ public class Peer implements Runnable {
    * Print info about Peer.
    */
   public String info() {
-    String out = "--> peerId: " + getPeerId() + "\n"
-           + "--> numPeers: " + getPeerHandlers().size() + "\n\n"
-           + "Peer Addresses:\n";
+    String out;
 
-    for (PeerHandler ph : getPeerHandlers()) {
-      out += "  -->" + ph.getRemoteAddress().toString() + "\n";
+    ArrayList<PeerHandler> peerHandlers = getPeerHandlers();
+    synchronized(peerHandlers) {
+      out = "--> peerId: " + getPeerId() + "\n"
+          + "--> numPeers: " + getPeerHandlers().size() + "\n\n"
+          + "Peer Addresses:\n";
+
+      for (PeerHandler ph : getPeerHandlers()) {
+        out += "  -->" + ph.getRemoteAddress().toString() + "\n";
+      }
     }
-
+    
     return out;
   }
 
