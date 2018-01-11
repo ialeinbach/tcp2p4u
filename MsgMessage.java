@@ -2,7 +2,7 @@ public class MsgMessage extends Message {
   private String content;
 
   /**
-   * Receives parameters as fields.
+   * Receives parameters into fields.
    *
    * @param content body of Message
    *

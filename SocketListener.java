@@ -10,7 +10,7 @@ public class SocketListener extends Observable implements Runnable {
   private boolean active;
 
   /**
-   * Receives parameters as fields. Creates ServerSocket to listen for
+   * Receives parameters into fields. Creates ServerSocket to listen for
    * new remote Peers.
    *
    * @param peer the parent Peer
@@ -72,7 +72,7 @@ public class SocketListener extends Observable implements Runnable {
           peerHandlers.add(new PeerHandler(peer, sktToPeer));
         }
       } catch (SocketException se) {
-        // thrown when serverSocket.close() is called
+        // Local Peer stopping...
         stop();
       } catch (Exception e) {
         e.printStackTrace();

@@ -38,7 +38,8 @@ public class EchoHandler extends Observable implements Observer {
 
   /**
    * Receives incoming Message object, stores in MessageHistory, and performs
-   * actions that depend on the child class of Message the object is.
+   * actions that depend on the child class of Message the object is. If 
+   * Message was already received, ignore it.
    *
    * <p>MsgMessage: record in chat and broadcast</p>
    * <p>CtrlMessage: connect Peer to specified address</p>

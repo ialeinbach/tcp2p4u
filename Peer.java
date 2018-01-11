@@ -14,7 +14,7 @@ import java.util.Scanner;
 public class Peer implements Runnable {
   private static final int REQ_PORT = 8888;
   private static final int COM_PORT = 40000;
-  private static final String chatFilename = ".peerchat.txt";
+  private static final String chatFilename = ".peerchat";
 
   private boolean active;
   private final int peerId;               // unique id for each Peer
