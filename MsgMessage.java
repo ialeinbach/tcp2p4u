@@ -27,6 +27,7 @@ public class MsgMessage extends Message {
    *
    * @return String representation of this MsgMessage
    */
+  @Override
   public String toString() {
     return "[From Peer " + getSender() + "] " + getContent();
   }

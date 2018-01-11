@@ -29,6 +29,7 @@ public class CtrlMessage extends Message {
    *
    * @return String representation of this CtrlMessage
    */
+  @Override
   public String toString() {
     return "[Peer " + getSender() + " disconnecting] Connect to: " + getConnection();
   }
