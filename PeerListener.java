@@ -7,17 +7,16 @@ import java.util.Observer;
 
 public class PeerListener extends Observable implements Runnable {
   private final ObjectInputStream input;
-  private boolean active;
-  private PeerHandler peerHandler;
+  private final PeerHandler peerHandler;
+  private boolean active;  
 
   /**
    * Receives parameters into fields.
    *
-   * @param peer the parent Peer
    * @param peerHandler the parent PeerHandler
    * @param input an ObjectInputStream through which a remote Peer sends Messages
    */
-  public PeerListener(Peer peer, PeerHandler peerHandler, ObjectInputStream input) {
+  public PeerListener(PeerHandler peerHandler, ObjectInputStream input) {
     this.input = input;
     this.peerHandler = peerHandler;
     active = false;
