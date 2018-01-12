@@ -21,7 +21,7 @@ Run `java PeerRequester` with command line arguments to run peer commands.
 
 `join` is variadic and instructs the locally hosted Peer to connect to remote Peers at given IPs.   
 
-`start` takes no arguments and creates a locally hosted Peer.
+`start` takes one argument X and creates a locally hosted Peer with `peerId = X`.   
 
 ## Ports
 
