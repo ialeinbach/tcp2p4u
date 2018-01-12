@@ -104,6 +104,11 @@ public class EchoHandler extends Observable implements Observer {
     ArrayList<PeerHandler> peerHandlers = peer.getPeerHandlers();
     synchronized(peerHandlers) {
       int numPeers = peerHandlers.size();
+
+      if (numPeers < 2) {
+        return
+      }
+
       InetAddress prevPeer = peerHandlers.get(0).getRemoteAddress();
       PeerHandler currPeer;
 
